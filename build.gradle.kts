@@ -16,6 +16,10 @@ repositories {
 }
 
 dependencies {
+	//apache
+	implementation("org.apache.poi:poi:5.2.1")
+	implementation("org.apache.poi:poi-ooxml:5.2.1")
+
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
