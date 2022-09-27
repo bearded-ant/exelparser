@@ -20,7 +20,13 @@ dependencies {
 	implementation("org.apache.poi:poi:5.2.1")
 	implementation("org.apache.poi:poi-ooxml:5.2.1")
 
+	//spring
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	//thymeleaf
+	implementation ("org.springframework.boot:spring-boot-starter-thymeleaf:2.7.4")
+
+
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
