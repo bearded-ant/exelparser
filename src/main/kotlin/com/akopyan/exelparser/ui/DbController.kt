@@ -1,8 +1,8 @@
 package com.akopyan.exelparser.ui
 
 import com.akopyan.exelparser.ParseXMLX
-import com.akopyan.exelparser.domain.Finances
-import com.akopyan.exelparser.domain.FinancesRepo
+import com.akopyan.exelparser.domain.database.Finances
+import com.akopyan.exelparser.domain.database.FinancesRepo
 import com.akopyan.exelparser.domain.Folder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller

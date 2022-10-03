@@ -1,4 +1,4 @@
-package com.akopyan.exelparser.domain
+package com.akopyan.exelparser.domain.database
 
 import org.springframework.data.repository.CrudRepository
 
