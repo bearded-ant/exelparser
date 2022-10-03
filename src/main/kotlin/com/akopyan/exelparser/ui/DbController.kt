@@ -1,10 +1,13 @@
 package com.akopyan.exelparser.ui
 
-import com.akopyan.exelparser.domain.Client
-import com.akopyan.exelparser.domain.ClientRepo
+import com.akopyan.exelparser.ParseXMLX
+import com.akopyan.exelparser.domain.Finances
+import com.akopyan.exelparser.domain.FinancesRepo
+import com.akopyan.exelparser.domain.Folder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @Controller
 @RequestMapping(path = ["/db"])
@@ -12,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 class DbController {
 
     @Autowired
-    private val userRepository: ClientRepo? = null
+    private val financeRepository: FinancesRepo? = null
 
 //    @PostMapping(path = ["/all"])
 //    fun add(@RequestParam name: String?, model: MutableMap<String, Any>): String {
@@ -26,9 +29,24 @@ class DbController {
 //    }
 
     @GetMapping(path = ["/all"])
-    fun viewAll(model: MutableMap<String, Iterable<Client>>): String {
-        val allUsers = userRepository!!.findAll()
-        model["h2db"] = allUsers
+    fun viewAll(model: MutableMap<String, Iterable<Finances>>): String {
+        val finances = financeRepository!!.findAll()
+        model["finances"] = finances
         return "dball"
+    }
+
+    @GetMapping(path = ["/uploading"])
+    fun showBlanc(): String = "uploading"
+
+
+    @PostMapping(path = ["/uploading"])
+    fun show(@RequestParam folderName: List<MultipartFile>, model: MutableMap<String, Any>): String {
+        val files = mutableListOf<Folder>()
+        for (file in folderName) {
+            ParseXMLX().parse(file.originalFilename!!)
+            files.add(Folder(file.originalFilename))
+        }
+        model["folders"] = files
+        return "uploading"
     }
 }

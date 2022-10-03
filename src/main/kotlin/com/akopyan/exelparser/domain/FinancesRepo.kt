@@ -2,5 +2,5 @@ package com.akopyan.exelparser.domain
 
 import org.springframework.data.repository.CrudRepository
 
-
-interface ClientRepo : CrudRepository<Client, Int>
+interface FinancesRepo : CrudRepository<Finances, Int> {
+}
