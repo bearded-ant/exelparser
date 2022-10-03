@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru" xml:lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>db info</title>
+</head>
+<body>
+
+<div>
+    <h1>Folder upload</h1>
+    <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+        <label for="folder">Select folder</label>
+        <input type="file" name="folderName" id="folder" webkitdirectory dirname multiple/>
+        <td><input type="submit" value="Upload"/></td>
+    </form>
+    <h2>Selected Files</h2>
+    {{#folders}}
+        <ul>
+            {{id}}, {{folderName}}
+        </ul>
+    {{/folders}}
+</div>
+
+</body>
+</html>

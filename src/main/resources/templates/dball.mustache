@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Db entities</title>
+    <meta charset="UTF-8"/>
+    <title>db info</title>
 </head>
 <body>
 <div>
     <form method="post">
-        <input type="text" name="text" placeholder="Введите имя" />
-        <button type="submit">Добавить</button>
+        <input name="name" placeholder="Input message" type="text"/>
+        <button type="submit">Add</button>
     </form>
 </div>
+
 <div>
     {{#h2db}}
-        <span>{{id}}</span>
-        <b>{{name}}</b>
+        <ol>{{id}}, {{name}}</ol>
     {{/h2db}}
 </div>
+
 </body>
 </html>

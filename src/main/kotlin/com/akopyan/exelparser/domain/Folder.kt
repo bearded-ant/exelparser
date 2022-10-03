@@ -6,9 +6,9 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-data class H2db(
+data class Folder(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int = 0,
-    val name: String? = ""
+    val id:Int = 0,
+    val folderName: String? = ""
 )
