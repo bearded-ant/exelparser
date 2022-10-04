@@ -20,6 +20,18 @@
         </ol>
     {{/folders}}
 </div>
+<div>
+    <h4>Copies</h4>
+    {{#hash}}
+        <ol>{{clientId}}</ol>
+    {{/hash}}
+</div>
+
+<div>
+    {{#some}}
+        <h4>{{.}}</h4>
+    {{/some}}
+</div>
 
 </body>
 </html>
