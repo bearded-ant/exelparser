@@ -1,6 +1,6 @@
 package com.akopyan.exelparser.ui
 
-import com.akopyan.exelparser.ParseXMLX
+import com.akopyan.exelparser.utils.ParseXMLX
 import com.akopyan.exelparser.domain.Folder
 import com.akopyan.exelparser.domain.database.ClientRepo
 import com.akopyan.exelparser.domain.database.Finances
@@ -47,35 +47,35 @@ class DbController {
 
 
     @PostMapping(path = ["/uploading"])
-    fun show(@RequestParam folderName: List<MultipartFile>, model: MutableMap<String, Any>): String {
+    fun uploadingCompanyReport(@RequestParam folderName: List<MultipartFile>, model: MutableMap<String, Any>): String {
         val files = mutableListOf<Folder>()
         var result = ""
+
+        updateDb(folderName)
+
+        model["folders"] = files
+        return "uploading"
+    }
+
+
+    private fun updateDb(folderName: List<MultipartFile>) {
+
         for (file in folderName) {
 
             val timeStamp = parser.parseNameToDataStamp(file.originalFilename!!)
-            val companyReport = parser.parseCompanyReport(file.originalFilename!!)
+            val reportFile = parser.parseCompanyReport(file.originalFilename!!)
 
-            for (i in 0..companyReport.lastIndex) {
-                val stringCode: Int = companyReport[i].toString().hashCode()
-//                var simpleHashCode = 0L
-//                for (k in 0..stringCode.lastIndex) {
-//                    simpleHashCode += stringCode[k].code
-//todo полностью переписать!!!! полная поебень
-                    val copyHas = financeRepository!!.findByHas(stringCode)
-                    if (copyHas.isNotEmpty()) {
-                        model["hash"] = copyHas
-                    } else {
-                        val finance = financeEntityBuilder(companyReport[i], stringCode, timeStamp)
-                        financeRepository.save(finance)
-                        result = "success"
-                        model.put("some", result)
-                    }
-//                }
+            for (i in 0..reportFile.lastIndex) {
+                val reportStringHashCode: Int = reportFile[i].toString().hashCode()
+                val dbEntityHashCode = financeRepository!!.findByHas(reportStringHashCode)
+
+                if (dbEntityHashCode.isEmpty()) {
+                    val finance = financeEntityBuilder(reportFile[i], reportStringHashCode, timeStamp)
+                    financeRepository.save(finance)
+                }
             }
-            files.add(Folder(file.originalFilename))
+//            files.add(Folder(file.originalFilename))
         }
-        model["folders"] = files
-        return "uploading"
     }
 
 
@@ -86,7 +86,7 @@ class DbController {
     ): Finances {
         return Finances(
             id = 0,
-            clientId = financeParse[1].toInt(),
+            accountId = financeParse[1].toInt(),
             clearing = financeParse[5],
             floating = financeParse[6],
             bonusRISK = financeParse[7],

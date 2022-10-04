@@ -10,7 +10,7 @@ data class Finances(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int =0,
-    val clientId: Int = 0,
+    val accountId: Int = 0,
     val report_date: String,
     val clearing: String = "",
     val floating: String = "",
