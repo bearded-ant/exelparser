@@ -19,5 +19,5 @@ data class Finances(
     val netto: String = "",
     val bonusPIPS: String = "",
     val IbPayment: String = "",
-    val has: Int = 0,
+    val hash: Int = 0,
 )

@@ -1,8 +1,8 @@
 package com.akopyan.exelparser.ui
 
-import com.akopyan.exelparser.utils.ParseXMLX
 import com.akopyan.exelparser.domain.Folder
 import com.akopyan.exelparser.domain.database.*
+import com.akopyan.exelparser.utils.ParseXMLX
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
 
 @Controller
-@RequestMapping(path = ["/db"])
+@RequestMapping()
 
 class DbController {
 
@@ -27,16 +27,6 @@ class DbController {
     @Autowired
     private val accountRepo: AccountRepo? = null
 
-//    @PostMapping(path = ["/all"])
-//    fun add(@RequestParam name: String?, model: MutableMap<String, Any>): String {
-//        val n = H2db(0, name)
-//        userRepository!!.save(n)
-//
-//        val allUsers = userRepository.findAll()
-//        model["h2db"] = allUsers
-//
-//        return "dball"
-//    }
 
     @GetMapping(path = ["/all"])
     fun viewAll(model: MutableMap<String, Iterable<Finances>>): String {
@@ -47,7 +37,6 @@ class DbController {
 
     @GetMapping(path = ["/uploading"])
     fun showBlanc(): String = "uploading"
-
 
     @PostMapping(path = ["/uploading"])
     fun uploadingCompanyReport(@RequestParam folderName: List<MultipartFile>, model: MutableMap<String, Any>): String {
@@ -149,14 +138,8 @@ class DbController {
             accountCurrency = reportFile[4]
         )
 
-
-    private fun financeBuilder(
-        reportFile: List<String>,
-        accountId: Int,
-        simpleHashCode: Int,
-        reportDate: String
-    ): Finances {
-        return Finances(
+    private fun financeBuilder(reportFile: List<String>, accountId: Int, hashCode: Int, reportDate: String): Finances =
+        Finances(
             id = 0,
             accountId = accountId,
             clearing = reportFile[5],
@@ -166,8 +149,7 @@ class DbController {
             netto = reportFile[9],
             bonusPIPS = reportFile[10],
             IbPayment = reportFile[11],
-            has = simpleHashCode,
+            hash = hashCode,
             report_date = reportDate
         )
-    }
 }
