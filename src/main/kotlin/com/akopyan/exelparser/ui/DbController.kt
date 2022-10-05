@@ -20,10 +20,8 @@ class DbController {
 
     @Autowired
     private val financeRepository: FinancesRepo? = null
-
     @Autowired
     private val clientRepo: ClientRepo? = null
-
     @Autowired
     private val accountRepo: AccountRepo? = null
 
@@ -41,7 +39,7 @@ class DbController {
     @PostMapping(path = ["/uploading"])
     fun uploadingCompanyReport(@RequestParam folderName: List<MultipartFile>, model: MutableMap<String, Any>): String {
         val files = mutableListOf<Folder>()
-        var result = ""
+
 
         updateDb(folderName)
 
@@ -59,7 +57,7 @@ class DbController {
 
             for (i in 0..reportFile.lastIndex) {
                 val reportStringHashCode: Int = ("${reportFile[i]}${timeStamp}").hashCode()
-                val dbEntityHashCode = financeRepository!!.findByHas(reportStringHashCode)
+                val dbEntityHashCode = financeRepository!!.findByHash(reportStringHashCode)
 
                 if (dbEntityHashCode.isEmpty()) {
                     val reportRow = reportFile[i]

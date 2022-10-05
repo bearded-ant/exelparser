@@ -3,34 +3,47 @@
 <head>
     <meta charset="UTF-8"/>
     <title>db info</title>
+    <link rel="stylesheet" type="text/css" href="css/upload.css">
 </head>
 <body>
 
-<div>
-    <h1>Folder upload</h1>
-    <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
-        <label for="folder">Select folder</label>
-        <input type="file" name="folderName" id="folder" webkitdirectory dirname multiple/>
-        <td><input type="submit" value="Upload"/></td>
-    </form>
-    <h2>Selected Files</h2>
-    {{#folders}}
-        <ol type="1">
-            {{folderName}}
-        </ol>
-    {{/folders}}
-</div>
-<div>
-    <h4>Copies</h4>
-    {{#hash}}
-        <ol>{{clientId}}</ol>
-    {{/hash}}
-</div>
-
-<div>
-    {{#some}}
-        <h4>{{.}}</h4>
-    {{/some}}
+<div class="row">
+    <div class="column" style="background-color:#aaa;">
+        <h1>Upload company reports <span>branch_YYYY_M.xlsx</span></h1>
+        <p>
+        <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+            <label for="folder">Select folder</label>
+            <input type="file" name="folderName" id="folder" webkitdirectory dirname multiple/>
+            <input type="submit" value="UPLOAD"/>
+        </form>
+        </p>
+        <p>
+        <h4>uploaded files</h4>
+        {{#folders}}
+            <ol type="1">
+                {{folderName}}
+            </ol>
+        {{/folders}}
+        </p>
+    </div>
+    <div class="column" style="background-color:#bbb;">
+        <h1>Upload employee reports <span>token_YYYY_M.xlsx</span></h1>
+        <p>
+        <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8">
+            <label for="folder">Select folder</label>
+            <input type="file" name="folderName" id="folder" webkitdirectory dirname multiple/>
+            <input type="submit" value="UPLOAD"/>
+        </form>
+        </p>
+        <p>
+        <h4>uploaded files</h4>
+        {{#folders}}
+            <ol type="1">
+                {{folderName}}
+            </ol>
+        {{/folders}}
+        </p>
+    </div>
 </div>
 
 </body>
