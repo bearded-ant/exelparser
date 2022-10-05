@@ -14,37 +14,33 @@ import org.springframework.web.multipart.MultipartFile
 @Controller
 @RequestMapping()
 
-class DbController {
+class EmployeeReportController {
 
     private val parser: ParserCompanyReport = ParserCompanyReport()
 
     @Autowired
     private val financeRepository: FinancesRepo? = null
+
     @Autowired
     private val clientRepo: ClientRepo? = null
+
     @Autowired
     private val accountRepo: AccountRepo? = null
 
+    @GetMapping(path = ["/employee"])
+    fun showBlanc(): String = "employee"
 
-    @GetMapping(path = ["/all"])
-    fun viewAll(model: MutableMap<String, Iterable<Finances>>): String {
-        val finances = financeRepository!!.findAll()
-        model["finances"] = finances
-        return "dball"
-    }
-
-    @GetMapping(path = ["/uploading"])
-    fun showBlanc(): String = "uploading"
-
-    @PostMapping(path = ["/uploading"])
-    fun uploadingCompanyReport(@RequestParam folderName: List<MultipartFile>, model: MutableMap<String, Any>): String {
+    @PostMapping(path = ["/employee"])
+    fun uploadingEmployeeReport(
+        @RequestParam employeeReportFolder: List<MultipartFile>,
+        model: MutableMap<String, Any>
+    ): String {
         val files = mutableListOf<Folder>()
 
+//        updateDb(folderName)
 
-        updateDb(folderName)
-
-        model["folders"] = files
-        return "uploading"
+        model["employeeReportFolder"] = "employee"
+        return "employee"
     }
 
 

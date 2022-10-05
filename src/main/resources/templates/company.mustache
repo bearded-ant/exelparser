@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru" xml:lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>db info</title>
+    <link rel="stylesheet" type="text/css" href="css/upload.css">
+    <link rel="stylesheet" type="text/css" href="css/menu.css">
+</head>
+<body>
+
+<div id="selection">
+    <ul id="selection-items" style="">
+        <li>
+            <a href="#">Reports</a>
+        </li>
+        <li >
+            <a href="/company">Company Report</a>
+        </li>
+        <li >
+            <a href="/employee">Employee report</a>
+        </li>
+    </ul>
+</div>
+
+<div id="padding-bottom"></div>
+
+<div class="row">
+    <div class="column" style="background-color:#aaa;">
+        <h1>Upload company reports <span>branch_YYYY_M.xlsx</span></h1>
+        <p>
+        <form method="POST" enctype="multipart/form-data" accept-charset="UTF-8" name="company">
+            <label for="folder">Select folder</label>
+            <input type="file" name="companyReportFolder" id="companyReportFolder" webkitdirectory dirname multiple/>
+            <input type="submit" value="UPLOAD"/>
+        </form>
+        </p>
+        <p>
+        <h4>uploaded files</h4>
+        {{#companyReportFolder}}
+            <ol>
+                {{.}}
+            </ol>
+        {{/companyReportFolder}}
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
