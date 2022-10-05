@@ -7,12 +7,11 @@ import java.text.DecimalFormat
 
 private const val BASE_PATH: String = "/home/ant/akopyan/"
 private const val SHEET_NAME: String = "Detailed franchisee"
-private const val RESULT_PATH_FILE: String = "/home/ant/a_$SHEET_NAME.xlsx"
 private val COLUM_INDEX: ArrayList<Int> = arrayListOf(0, 1, 2, 3, 4, 8, 12, 16, 20, 28, 32, 33)
 private const val ROW_START_INDEX: Int = 7
 private val decFormat = DecimalFormat("#.##")
 
-class ParseXMLX() {
+class ParserCompanyReport() {
 
     fun parseNameToDataStamp(fileName: String): String {
         val regex = Regex("""\d{4}_\d{1,2}""")
