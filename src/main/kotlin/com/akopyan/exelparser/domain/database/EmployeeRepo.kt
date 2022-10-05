@@ -4,5 +4,5 @@ import org.springframework.data.repository.CrudRepository
 
 
 interface EmployeeRepo : CrudRepository<Employee, Int> {
-    fun findByClientId(clientId: Int): List<Employee>
+    fun findAllByToken(token: String): List<Employee>
 }

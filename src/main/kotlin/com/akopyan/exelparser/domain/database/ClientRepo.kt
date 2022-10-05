@@ -4,5 +4,5 @@ import org.springframework.data.repository.CrudRepository
 
 
 interface ClientRepo : CrudRepository<Client, Int> {
-    fun findByClientId(clientId: Int): List<Client>
+    fun findAllByClientId(clientId: Int): List<Client>
 }

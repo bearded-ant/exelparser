@@ -6,9 +6,12 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-data class Employee(
+data class RegisteredTreatment(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int = 0,
-    val token: String = ""
+    val tokenId: Int = 0,
+    val client: Int = 0,
+    val contactDate:String = "",
+    val reportingPeriod: String = ""
 )

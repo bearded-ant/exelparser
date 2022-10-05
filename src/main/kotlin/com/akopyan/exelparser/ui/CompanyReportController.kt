@@ -52,17 +52,17 @@ class CompanyReportController {
 
             for (i in 0..reportFile.lastIndex) {
                 val reportStringHashCode: Int = ("${reportFile[i]}${timeStamp}").hashCode()
-                val dbEntityHashCode = financeRepository!!.findByHash(reportStringHashCode)
+                val dbEntityHashCode = financeRepository!!.findAllByHash(reportStringHashCode)
 
                 if (dbEntityHashCode.isEmpty()) {
                     val reportRow = reportFile[i]
-                    if (clientRepo!!.findByClientId(reportRow[1].toInt()).isEmpty()) {
+                    if (clientRepo!!.findAllByClientId(reportRow[1].toInt()).isEmpty()) {
 
                         createAllTablesEntity(reportRow, reportStringHashCode, timeStamp)
 
                     } else {
-                        val client = clientRepo.findByClientId(reportRow[1].toInt())
-                        if (accountRepo!!.findByAccount(reportRow[3]).isEmpty()) {
+                        val client = clientRepo.findAllByClientId(reportRow[1].toInt())
+                        if (accountRepo!!.findAllByAccount(reportRow[3]).isEmpty()) {
                             createAccountAndFinancesTableEntity(
                                 reportRow,
                                 client[0].id,
@@ -70,8 +70,8 @@ class CompanyReportController {
                                 timeStamp,
                             )
                         } else {
-                            val account = accountRepo.findByAccount(reportRow[3])
-                            createFinanceTaleEntity(reportRow, account[0].id, reportStringHashCode, timeStamp)
+                            val account = accountRepo.findAllByAccount(reportRow[3])
+                            createFinanceTableEntity(reportRow, account[0].id, reportStringHashCode, timeStamp)
                         }
                     }
                 }
@@ -80,7 +80,7 @@ class CompanyReportController {
 //            files.add(Folder(file.originalFilename))
     }
 
-    private fun createFinanceTaleEntity(
+    private fun createFinanceTableEntity(
         reportRow: List<String>,
         accountId: Int,
         reportStringHashCode: Int,
@@ -99,7 +99,7 @@ class CompanyReportController {
     ) {
         val account = accountBuilder(reportRow, clientId)
         accountRepo!!.save(account)
-        createFinanceTaleEntity(reportRow, account.id, reportStringHashCode, timeStamp)
+        createFinanceTableEntity(reportRow, account.id, reportStringHashCode, timeStamp)
     }
 
     private fun createAllTablesEntity(
@@ -111,7 +111,7 @@ class CompanyReportController {
         clientRepo!!.save(client)
         val account = accountBuilder(reportRow, client.id)
         accountRepo!!.save(account)
-        createFinanceTaleEntity(reportRow, account.id, reportStringHashCode, timeStamp)
+        createFinanceTableEntity(reportRow, account.id, reportStringHashCode, timeStamp)
     }
 
 
@@ -143,6 +143,6 @@ class CompanyReportController {
             bonusPIPS = reportFile[10],
             IbPayment = reportFile[11],
             hash = hashCode,
-            report_date = reportDate
+            reportingPeriod = reportDate
         )
 }

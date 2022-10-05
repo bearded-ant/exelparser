@@ -11,7 +11,7 @@ data class Finances(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int =0,
     val accountId: Int = 0,
-    val report_date: String,
+    val reportingPeriod: String,
     val clearing: String = "",
     val floating: String = "",
     val bonusRISK: String = "",
