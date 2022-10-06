@@ -35,7 +35,7 @@ class ParserCompanyReport() {
                 if ((exelPrice[i].isNotEmpty()) && (exelPrice[i][COLUM_INDEX[0]].isNotEmpty())) {
                     val row = arrayListOf<String>()
                     for (j in COLUM_INDEX)
-                        row.add(getFloatFormattedString(exelPrice, i, j))
+                        row.add(getFloatFormattedString(exelPrice[i][j]))
                     changePrice.add(row)
                     println(changePrice[counter].toString())
                     counter++
@@ -46,11 +46,9 @@ class ParserCompanyReport() {
     }
 
     private fun getFloatFormattedString(
-        exelPrice: List<List<String>>,
-        i: Int,
-        j: Int,
-        ) = if (exelPrice[i][j].toFloatOrNull() != null) decFormat.format(exelPrice[i][j].toFloat())
-        .toString() else exelPrice[i][j]
+        cellValue: String
+    ) = if (cellValue.toFloatOrNull() != null) decFormat.format(cellValue.toFloat())
+        .toString() else cellValue
 
     private fun readPriceToArray(pathUri: String): List<List<String>> {
         val newBook = ExelFileRepoImpl().openBook(pathUri)
