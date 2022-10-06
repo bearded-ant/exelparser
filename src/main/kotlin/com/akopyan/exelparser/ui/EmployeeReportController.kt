@@ -66,7 +66,7 @@ class EmployeeReportController {
                             0,
                             employeeRepo.findAllByToken(token)[0].id,
                             reportRow[0].toInt(),
-                            reportRow[2],
+                            reportRow[1],
                             timeStamp
                         )
                     treatmentRepo!!.save(treatment)
@@ -78,7 +78,7 @@ class EmployeeReportController {
                                 0,
                                 employeeRepo.findAllByToken(token)[0].id,
                                 reportRow[0].toInt(),
-                                reportRow[2],
+                                reportRow[1],
                                 timeStamp
                             )
                         treatmentRepo.save(treatment)
