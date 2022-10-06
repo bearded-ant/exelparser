@@ -1,7 +1,10 @@
 package com.akopyan.exelparser.ui
 
 import com.akopyan.exelparser.domain.Folder
+import com.akopyan.exelparser.domain.database.Employee
 import com.akopyan.exelparser.domain.database.EmployeeRepo
+import com.akopyan.exelparser.domain.database.Treatment
+import com.akopyan.exelparser.domain.database.TreatmentRepo
 import com.akopyan.exelparser.utils.ParserEmployeeReport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -21,6 +24,9 @@ class EmployeeReportController {
     @Autowired
     private val employeeRepo: EmployeeRepo? = null
 
+    @Autowired
+    private val treatmentRepo: TreatmentRepo? = null
+
 
     @GetMapping(path = ["/employee"])
     fun showBlanc(): String = "employee"
@@ -32,7 +38,7 @@ class EmployeeReportController {
     ): String {
         val files = mutableListOf<Folder>()
 
-//        updateDb(folderName)
+        updateDb(employeeReportFolder)
 
         model["employeeReportFolder"] = "employee"
         return "employee"
@@ -45,14 +51,42 @@ class EmployeeReportController {
 
             val timeStamp = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
             val token = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
+            //todo надо запилить проверку файлов на формат и содержимое
             val reportFile = parser.parseEmployeeReport(file.originalFilename!!)
 
             for (i in 0..reportFile.lastIndex) {
                 val reportStringHashCode: Int = ("${reportFile[i]}${timeStamp}").hashCode()
+                val reportRow = reportFile[i]
 
-
+                if (employeeRepo!!.findAllByToken(token).isEmpty()) {
+                    val employee = Employee(0, token)
+                    employeeRepo.save(employee)
+                    val treatment =
+                        Treatment(
+                            0,
+                            employeeRepo.findAllByToken(token)[0].id,
+                            reportRow[0].toInt(),
+                            reportRow[2],
+                            timeStamp
+                        )
+                    treatmentRepo!!.save(treatment)
+                } else {
+                    val client = reportRow[0].toInt()
+                    if (treatmentRepo!!.findAllByClient(client).isEmpty()) {
+                        val treatment =
+                            Treatment(
+                                0,
+                                employeeRepo.findAllByToken(token)[0].id,
+                                reportRow[0].toInt(),
+                                reportRow[2],
+                                timeStamp
+                            )
+                        treatmentRepo.save(treatment)
+                    } else {
+                        //todo запись есть, надо обрабатывать
+                    }
+                }
             }
         }
     }
-
 }
