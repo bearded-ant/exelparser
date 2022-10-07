@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDate
 
 @Controller
 @RequestMapping()
@@ -46,18 +47,16 @@ class EmployeeReportController {
 
 
     private fun updateDb(folderName: List<MultipartFile>) {
-
+        //todo надо запилить проверку файлов на формат и содержимое
         for (file in folderName) {
 
             val timeStamp = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
             val token = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
-            //todo надо запилить проверку файлов на формат и содержимое
             val reportFile = parser.parseEmployeeReport(file.originalFilename!!)
 
             for (i in 0..reportFile.lastIndex) {
-                val reportStringHashCode: Int = ("${reportFile[i]}${timeStamp}").hashCode()
                 val reportRow = reportFile[i]
-
+//если не записи employee создаем ее и обращение
                 if (employeeRepo!!.findAllByToken(token).isEmpty()) {
                     val employee = Employee(0, token)
                     employeeRepo.save(employee)
@@ -72,6 +71,7 @@ class EmployeeReportController {
                     treatmentRepo!!.save(treatment)
                 } else {
                     val client = reportRow[0].toInt()
+//employee существует, ищем запись treatment. если такой нет - создаем
                     if (treatmentRepo!!.findAllByClient(client).isEmpty()) {
                         val treatment =
                             Treatment(
@@ -83,7 +83,21 @@ class EmployeeReportController {
                             )
                         treatmentRepo.save(treatment)
                     } else {
-                        //todo запись есть, надо обрабатывать
+                        val treatments = treatmentRepo.findAllByClient(client)
+                        var currentDay = LocalDate.parse(reportRow[1])
+                        for (treatment in treatments) {
+                            if (currentDay > LocalDate.parse(treatment.contactDate)) {
+                                val treatment =
+                                    Treatment(
+                                        0,
+                                        employeeRepo.findAllByToken(token)[0].id,
+                                        reportRow[0].toInt(),
+                                        reportRow[1],
+                                        timeStamp
+                                    )
+                                treatmentRepo.save(treatment)
+                            }
+                        }
                     }
                 }
             }

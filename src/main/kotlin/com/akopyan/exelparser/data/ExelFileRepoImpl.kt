@@ -44,12 +44,20 @@ class ExelFileRepoImpl : ExelFileRepo {
             val cellIterator: Iterator<Cell> = row.cellIterator()
             val string = mutableListOf<String>()
             while (cellIterator.hasNext()) {
-                val cell = cellIterator.next()
+                val sdf: DataFormatter = DataFormatter(true)
+                val cell = sdf.formatCellValue(cellIterator.next())
                 var cellValue = cell.toString()
-                if (cell.cellType == CellType.FORMULA) {
-                    val value = evaluator.evaluate(cell)
-                    cellValue = value.numberValue.toString()
-                }
+//                if (cell.cellType == CellType.FORMULA) {
+//                    val value = evaluator.evaluate(cell)
+//                    cellValue = value.numberValue.toString()
+//                }
+//
+//                if (cell.cellType==CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+//                    val sdf: DataFormatter = DataFormatter(true)
+//
+//
+//                    cellValue =sdf.formatCellValue(cell)
+//                }
                 string.add(cellValue)
             }
             exelData.add(string)
