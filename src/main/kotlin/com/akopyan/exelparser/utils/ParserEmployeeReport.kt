@@ -18,7 +18,10 @@ class ParserEmployeeReport() {
         var token = ""
         if (regex.containsMatchIn(fileName)) {
             dateStamp = regex.find(fileName)!!.value
-            token = fileName.substring(0, fileName.length - dateStamp.length - 1)
+            val nameLength = fileName.length
+            val endingLength = dateStamp.length + 7
+            val slashIndex = if (fileName.lastIndexOf('\\') == -1) fileName.lastIndexOf('/') else fileName.lastIndexOf('\\')
+            token = fileName.substring(slashIndex+1, (nameLength - endingLength))
         }
         val result = mutableMapOf<String, String>()
         result["dateStamp"] = dateStamp
