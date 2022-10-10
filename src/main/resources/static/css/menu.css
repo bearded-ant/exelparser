@@ -24,6 +24,23 @@
     padding-bottom: 50px;
 }
 
+td {
+	padding-bottom: 8px;
+	padding-top: 8px;
+	padding-left:8px;
+	padding-right: 8px;
+}
+
+#table tbody tr:nth-child(odd){
+	background: #fff;
+	color: #000;
+}
+
+#table tbody tr:nth-child(even){
+	background: #F7F7F7;
+	color: #000;
+}
+
 a, a:visited, p{
   text-decoration: none;
   line-height: 1.3;

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru" xml:lang="ru">
+<head>
+    <meta charset="UTF-8"/>
+    <title>db info</title>
+    <link rel="stylesheet" type="text/css" href="css/upload.css">
+    <link rel="stylesheet" type="text/css" href="css/menu.css">
+</head>
+<body>
+
+<div id="selection">
+    <ul id="selection-items" style="">
+        <li>
+            <a href="/report">Reports</a>
+        </li>
+        <li>
+            <a href="/company">Company Report</a>
+        </li>
+        <li>
+            <a href="/employee">Employee report</a>
+        </li>
+    </ul>
+</div>
+
+<div id="padding-bottom"></div>
+
+
+    <div class="column" style="background-color:#bbb;">
+        <h1>Report <span>simple summary report</span></h1>
+    </div>
+    <div>
+        <p>
+        <table id="table">
+            <thead>
+            <tr>
+                <th>Client</th>
+                <th>Name</th>
+                <th>Netto</th>
+                <th>Token</th>
+                <th>City</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#reports}}
+            <tr>
+                <td>{{client}}</td>
+                <td>{{name}}</td>
+                <td><b>{{netto}}</b></td>
+                <td>{{token}} </td>
+                <td> {{city}} </td>
+            </tr>
+              {{/reports}}
+            </tbody>
+        </table>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
