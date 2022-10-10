@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDate
+import java.text.SimpleDateFormat
 
 @Controller
 @RequestMapping()
@@ -83,10 +83,12 @@ class EmployeeReportController {
                             )
                         treatmentRepo.save(treatment)
                     } else {
+//treatment существует, ищем запись сравниваем с текущей, большую записываем
                         val treatments = treatmentRepo.findAllByClient(client)
-                        var currentDay = LocalDate.parse(reportRow[1])
+                        var savedDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(treatments[0].contactDate)
+                        var newDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(reportRow[1])
                         for (treatment in treatments) {
-                            if (currentDay > LocalDate.parse(treatment.contactDate)) {
+                            if (savedDay < newDay) {
                                 val treatment =
                                     Treatment(
                                         0,
