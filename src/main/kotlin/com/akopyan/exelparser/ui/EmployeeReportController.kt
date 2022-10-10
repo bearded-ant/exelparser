@@ -1,10 +1,7 @@
 package com.akopyan.exelparser.ui
 
 import com.akopyan.exelparser.domain.Folder
-import com.akopyan.exelparser.domain.database.Employee
-import com.akopyan.exelparser.domain.database.EmployeeRepo
-import com.akopyan.exelparser.domain.database.Treatment
-import com.akopyan.exelparser.domain.database.TreatmentRepo
+import com.akopyan.exelparser.domain.database.*
 import com.akopyan.exelparser.utils.ParserEmployeeReport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -28,6 +25,9 @@ class EmployeeReportController {
     @Autowired
     private val treatmentRepo: TreatmentRepo? = null
 
+    @Autowired
+    private val duplicatesRepo: DuplicatesRepo? = null
+
 
     @GetMapping(path = ["/employee"])
     fun showBlanc(): String = "employee"
@@ -47,7 +47,7 @@ class EmployeeReportController {
     }
 
 
-    private fun updateDb(folderName: List<MultipartFile>) : List<Treatment> {
+    private fun updateDb(folderName: List<MultipartFile>): List<Treatment> {
         //todo надо запилить проверку файлов на формат и содержимое
         for (file in folderName) {
 
@@ -85,7 +85,12 @@ class EmployeeReportController {
                 }
             }
         }
-       return treatmentRepo!!.findDub()
+        val dupTreatments = treatmentRepo!!.findDub()
+        for (dupTreatment in dupTreatments) {
+            val duplicate = with(dupTreatment) { Duplicate(id, tokenId, client, contactDate, reportingPeriod) }
+            duplicatesRepo!!.save(duplicate)
+        }
+        return dupTreatments
     }
 
     private fun treatmentBuilder(

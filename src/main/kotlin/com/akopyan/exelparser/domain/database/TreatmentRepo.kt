@@ -14,16 +14,12 @@ interface TreatmentRepo : CrudRepository<Treatment, Int> {
     @Query("update Treatment t set t.contactDate = :contactDate where t.client = :client and t.tokenId = :tokenId")
     fun updateContactDate(contactDate: String, client: Int, tokenId: Int)
 
-
-    @Query("SELECT st.* " +
-            "FROM Treatment st " +
-            "WHERE st.client IN  " +
-            "(SELECT st.client FROM Treatment st GROUP BY st.client HAVING COUNT(*) > 1)  " +
-            "ORDER BY st.client", nativeQuery = true)
+    @Query(
+        "SELECT st.* " +
+                "FROM Treatment st " +
+                "WHERE st.client IN  " +
+                "(SELECT st.client FROM Treatment st GROUP BY st.client HAVING COUNT(*) > 1)  " +
+                "ORDER BY st.client", nativeQuery = true
+    )
     fun findDub(): List<Treatment>
-
-//    @Query("SELECT * FROM Treatment st WHERE st.client IN " +
-//            "(SELECT st.client FROM Treatment st GROUP BY st.client HAVING COUNT(*) > 1) " +
-//            "ORDER BY st.client")
-//    fun findAllByClient(clientId: Int): List<Treatment>
 }
