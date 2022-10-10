@@ -18,7 +18,7 @@ class ExelFileRepoImpl : ExelFileRepo {
         var book: XSSFWorkbook? = null
 
         try {
-            val file: File = File(path)
+            val file = File(path)
             book = WorkbookFactory.create(file) as XSSFWorkbook
 
         } catch (e: FileNotFoundException) {
@@ -45,13 +45,9 @@ class ExelFileRepoImpl : ExelFileRepo {
             val string = mutableListOf<String>()
 
             while (cellIterator.hasNext()) {
-                val sdf: DataFormatter = DataFormatter(true)
-                val cell = sdf.formatCellValue(cellIterator.next())
-                var cellValue = cell.toString()
-//                if (cell.cellType == CellType.FORMULA) {
-//                    val value = evaluator.evaluate(cell)
-//                    cellValue = value.numberValue.toString()
-//                }
+                val sdf = DataFormatter(true)
+                val cell = sdf.formatCellValue(cellIterator.next(), evaluator)
+                val cellValue = cell.toString()
                 string.add(cellValue)
             }
             exelData.add(string)
