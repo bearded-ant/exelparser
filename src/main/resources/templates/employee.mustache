@@ -36,11 +36,11 @@
         </p>
         <p>
         <h4>uploaded files</h4>
-        {{#employeeReportFolder}}
+        {{#duplicates}}
             <ol type="1">
-                {{.}}
+                {{id}}, {{tokenId}} {{client}} {{contactDate}}
             </ol>
-        {{/employeeReportFolder}}
+        {{/duplicates}}
         </p>
     </div>
 </div>

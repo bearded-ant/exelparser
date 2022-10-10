@@ -39,70 +39,68 @@ class EmployeeReportController {
     ): String {
         val files = mutableListOf<Folder>()
 
-        updateDb(employeeReportFolder)
+        val duplicates = updateDb(employeeReportFolder)
+        model["duplicates"] = duplicates
 
         model["employeeReportFolder"] = "employee"
         return "employee"
     }
 
 
-    private fun updateDb(folderName: List<MultipartFile>) {
+    private fun updateDb(folderName: List<MultipartFile>) : List<Treatment> {
         //todo надо запилить проверку файлов на формат и содержимое
         for (file in folderName) {
 
-            val timeStamp = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
+            val reportingPeriod = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
             val token = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
             val reportFile = parser.parseEmployeeReport(file.originalFilename!!)
 
             for (i in 0..reportFile.lastIndex) {
                 val reportRow = reportFile[i]
-//если не записи employee создаем ее и обращение
+                //если не записи employee создаем ее и обращение
                 if (employeeRepo!!.findAllByToken(token).isEmpty()) {
+
                     val employee = Employee(0, token)
                     employeeRepo.save(employee)
-                    val treatment =
-                        Treatment(
-                            0,
-                            employeeRepo.findAllByToken(token)[0].id,
-                            reportRow[0].toInt(),
-                            reportRow[1],
-                            timeStamp
-                        )
-                    treatmentRepo!!.save(treatment)
+                    treatmentBuilder(employee, reportRow, reportingPeriod)
+
                 } else {
                     val client = reportRow[0].toInt()
-//employee существует, ищем запись treatment. если такой нет - создаем
-                    if (treatmentRepo!!.findAllByClient(client).isEmpty()) {
-                        val treatment =
-                            Treatment(
-                                0,
-                                employeeRepo.findAllByToken(token)[0].id,
-                                reportRow[0].toInt(),
-                                reportRow[1],
-                                timeStamp
-                            )
-                        treatmentRepo.save(treatment)
+                    val employee = employeeRepo.findAllByToken(token)[0]
+                    //employee существует, ищем запись treatment. если такой нет - создаем
+                    if (treatmentRepo!!.findAllByClientAndTokenId(client, employee.id).isEmpty()) {
+                        treatmentBuilder(employee, reportRow, reportingPeriod)
                     } else {
-//treatment существует, ищем запись сравниваем с текущей, большую записываем
-                        val treatments = treatmentRepo.findAllByClient(client)
-                        var savedDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(treatments[0].contactDate)
-                        var newDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(reportRow[1])
+                        //treatment существует, ищем запись сравниваем с текущей, большую записываем
+                        val treatments = treatmentRepo.findAllByClientAndTokenId(client, employee.id)
+                        val savedDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(treatments[0].contactDate)
+                        val newDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(reportRow[1])
+
                         for (treatment in treatments) {
                             if (savedDay < newDay) {
-                                val treatment =
-                                    Treatment(
-                                        0,
-                                        employeeRepo.findAllByToken(token)[0].id,
-                                        reportRow[0].toInt(),
-                                        reportRow[1],
-                                        timeStamp
-                                    )
-                                treatmentRepo.save(treatment)
+                                treatmentRepo.updateContactDate(reportRow[1], reportRow[0].toInt(), treatment.tokenId)
                             }
                         }
                     }
                 }
             }
         }
+       return treatmentRepo!!.findDub()
+    }
+
+    private fun treatmentBuilder(
+        employee: Employee,
+        reportRow: List<String>,
+        reportingPeriod: String
+    ) {
+        val treatment =
+            Treatment(
+                id = 0,
+                tokenId = employee.id,
+                client = reportRow[0].toInt(),
+                contactDate = reportRow[1],
+                reportingPeriod = reportingPeriod
+            )
+        treatmentRepo!!.save(treatment)
     }
 }
