@@ -32,9 +32,9 @@
 <div>
     <form>
         <select name="select">
-            {{#periodvalues}}
-                <option value="s1">{{period}}</option>
-            {{/periodvalues}}
+            {{#reportPeriod}}
+                <option value={{.}}>{{.}}</option>
+            {{/reportPeriod}}
         </select>
         <input type="submit" value="generate report">
         <input type="submit" value="generate duplicates">

@@ -8,6 +8,7 @@ interface ReportRepo : CrudRepository<Report, Int> {
 
     @Query("select " +
             "tre.id, " +
+            "tre.reporting_period, " +
             "emp.token, " +
             "tre.client, " +
             "cli.name, " +

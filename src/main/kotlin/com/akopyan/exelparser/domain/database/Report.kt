@@ -14,4 +14,5 @@ data class Report(
     val netto: String = "",
     val token: String = "",
     val city: String = "",
+    val reportingPeriod: String =""
 )

@@ -17,6 +17,10 @@ class ReportController {
     fun showBlanc(model: MutableMap<String, Any>): String {
 
         val report = reportRepo!!.generateReport()
+        val period = mutableSetOf<String>()
+        for (reportRow in report)
+            period.add(reportRow.reportingPeriod)
+        model["reportPeriod"] = period
         model["reports"] = report
         return "report"
     }
