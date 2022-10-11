@@ -54,7 +54,8 @@ class ReportController {
             for (i in 0..reportWithPeriod.lastIndex) {
                 stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
             }
-            saveReport.saveReport(stringFormattedReport, "/home/ant/employeeReport.xlsx")
+//            saveReport.saveReport(stringFormattedReport, "/home/ant/employeeReport.xlsx")
+            saveReport.saveReport(stringFormattedReport, "employeeReport.xlsx")
 
         } else {
             val duplicatesReport = duplicatesRepo!!.findAll()
@@ -72,7 +73,8 @@ class ReportController {
                 result.add(resultRow)
                 stringFormattedReport.add(duplicatesReportToRow(value, token))
             }
-            saveReport.saveReport(stringFormattedReport, "/home/ant/duplicateReport.xlsx")
+//            saveReport.saveReport(stringFormattedReport, "/home/ant/duplicateReport.xlsx")
+            saveReport.saveReport(stringFormattedReport, "duplicateReport.xlsx")
             model["duplicates"] = result
         }
         return "report"

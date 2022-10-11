@@ -5,7 +5,8 @@ import com.akopyan.exelparser.data.ExelFileRepoImpl
 import java.io.File
 import java.text.DecimalFormat
 
-private const val BASE_PATH: String = "/home/ant/akopyan/"
+//private const val BASE_PATH: String = "/home/ant/akopyan/"
+private const val BASE_PATH: String = ""
 private const val SHEET_NAME: String = "Detailed franchisee"
 private val COLUM_INDEX: ArrayList<Int> = arrayListOf(0, 1, 2, 3, 4, 8, 12, 16, 20, 28, 32, 33)
 private const val ROW_START_INDEX: Int = 7
@@ -13,14 +14,23 @@ private val decFormat = DecimalFormat("#.##")
 
 class ParserCompanyReport() {
 
-    fun parseNameToDataStamp(fileName: String): String {
+    fun parseNameToTokenAndTimeStamp(fileName: String): Map<String, String> {
         val regex = Regex("""\d{4}_\d{1,2}""")
         var dateStamp = ""
+        var token = ""
         if (regex.containsMatchIn(fileName)) {
             dateStamp = regex.find(fileName)!!.value
+            val nameLength = fileName.length
+            val endingLength = dateStamp.length + 6
+            val slashIndex = if (fileName.lastIndexOf('\\') == -1) fileName.lastIndexOf('/') else fileName.lastIndexOf('\\')
+            token = fileName.substring(slashIndex+1, (nameLength - endingLength))
         }
-        return dateStamp
+        val result = mutableMapOf<String, String>()
+        result["dateStamp"] = dateStamp
+        result["token"] = token
+        return result
     }
+
 
     fun parseCompanyReport(pathToFile: String): List<List<String>> {
 

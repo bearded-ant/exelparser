@@ -91,7 +91,7 @@ class EmployeeReportController {
             val duplicate = with(dupTreatment) { Duplicate(id, tokenId, client, contactDate, reportingPeriod) }
             duplicatesRepo!!.save(duplicate)
         }
-         return dupTreatments!!
+         return dupTreatments
     }
 
     private fun treatmentBuilder(

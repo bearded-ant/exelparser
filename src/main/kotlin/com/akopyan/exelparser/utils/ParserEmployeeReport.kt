@@ -4,7 +4,8 @@ import com.akopyan.exelparser.data.ExelFileRepoImpl
 import java.io.File
 import java.text.DecimalFormat
 
-private const val BASE_PATH: String = "/home/ant/akopyan/"
+//private const val BASE_PATH: String = "/home/ant/akopyan/"
+private const val BASE_PATH: String = ""
 private const val SHEET_NAME: String = "Лист1"
 private val COLUM_INDEX: ArrayList<Int> = arrayListOf(0, 2)
 private const val ROW_START_INDEX: Int = 0
@@ -19,7 +20,7 @@ class ParserEmployeeReport() {
         if (regex.containsMatchIn(fileName)) {
             dateStamp = regex.find(fileName)!!.value
             val nameLength = fileName.length
-            val endingLength = dateStamp.length + 7
+            val endingLength = dateStamp.length + 6
             val slashIndex = if (fileName.lastIndexOf('\\') == -1) fileName.lastIndexOf('/') else fileName.lastIndexOf('\\')
             token = fileName.substring(slashIndex+1, (nameLength - endingLength))
         }

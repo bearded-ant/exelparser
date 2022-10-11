@@ -47,7 +47,8 @@ class CompanyReportController {
 
         for (file in folderName) {
 
-            val timeStamp = parser.parseNameToDataStamp(file.originalFilename!!)
+            val timeStamp = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
+            val branch = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
             val reportFile = parser.parseCompanyReport(file.originalFilename!!)
 
             for (i in 0..reportFile.lastIndex) {
@@ -58,7 +59,7 @@ class CompanyReportController {
                     val reportRow = reportFile[i]
                     if (clientRepo!!.findAllByClientId(reportRow[1].toInt()).isEmpty()) {
 
-                        createAllTablesEntity(reportRow, reportStringHashCode, timeStamp)
+                        createAllTablesEntity(reportRow, reportStringHashCode, timeStamp, branch)
 
                     } else {
                         val client = clientRepo.findAllByClientId(reportRow[1].toInt())
@@ -106,8 +107,9 @@ class CompanyReportController {
         reportRow: List<String>,
         reportStringHashCode: Int,
         timeStamp: String,
+        branch: String
     ) {
-        val client = clientBuilder(reportRow)
+        val client = clientBuilder(reportRow, branch)
         clientRepo!!.save(client)
         val account = accountBuilder(reportRow, client.id)
         accountRepo!!.save(account)
@@ -115,12 +117,12 @@ class CompanyReportController {
     }
 
 
-    private fun clientBuilder(reportFile: List<String>): Client =
+    private fun clientBuilder(reportFile: List<String>, branch: String): Client =
         Client(
             id = 0,
             clientId = reportFile[1].toInt(),
             name = reportFile[2],
-            city = reportFile[0]
+            city = branch
         )
 
     private fun accountBuilder(reportFile: List<String>, clientId: Int): Account =
