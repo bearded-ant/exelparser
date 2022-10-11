@@ -57,7 +57,7 @@ class ExelFileRepoImpl : ExelFileRepo {
     }
 
 
-    override fun writeBook(changePrice: MutableList<MutableList<String>>, filePath: String) {
+    override fun writeBook(changePrice: List<List<String>>, filePath: String) {
 
         val changeBook = XSSFWorkbook()
         val changeSheet = changeBook.createSheet()

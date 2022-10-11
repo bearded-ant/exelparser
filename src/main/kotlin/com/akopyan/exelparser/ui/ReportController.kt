@@ -20,6 +20,9 @@ class ReportController {
     @Autowired
     private val duplicatesRepo: DuplicatesRepo? = null
 
+    @Autowired
+    private val employeeRepo: EmployeeRepo? = null
+
     @GetMapping(path = ["/report"])
     fun showBlanc(model: MutableMap<String, Any>): String {
 
@@ -48,9 +51,28 @@ class ReportController {
         model["reportPeriod"] = period
         if (reportType == "MAIN") {
             model["reports"] = reportWithPeriod
+
+            val stringReport: MutableList<MutableList<String>> = mutableListOf()
+            for (reportRow in reportWithPeriod) {
+
+            }
+            val row: MutableList<String> = mutableListOf()
+
+
         } else {
             val duplicatesReport = duplicatesRepo!!.findAll()
-            model["duplicates"] = duplicatesReport
+            val result: MutableList<Any> = mutableListOf()
+
+            for (value in duplicatesReport) {
+                val resultRow = object {
+                    val token: String = employeeRepo!!.findById(value.tokenId).get().token
+                    val client: Int = value.client
+                    val contactDate: String = value.contactDate
+                    val reportingPeriod: String = value.reportingPeriod
+                }
+                result.add(resultRow)
+            }
+            model["duplicates"] = result
         }
         return "report"
     }
