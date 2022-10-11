@@ -49,6 +49,7 @@ class EmployeeReportController {
 
     private fun updateDb(folderName: List<MultipartFile>): List<Treatment> {
         //todo надо запилить проверку файлов на формат и содержимое
+
         for (file in folderName) {
 
             val reportingPeriod = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
@@ -68,11 +69,11 @@ class EmployeeReportController {
                     val client = reportRow[0].toInt()
                     val employee = employeeRepo.findAllByToken(token)[0]
                     //employee существует, ищем запись treatment. если такой нет - создаем
-                    if (treatmentRepo!!.findAllByClientAndTokenId(client, employee.id).isEmpty()) {
+                    if (treatmentRepo!!.findAllByClientAndTokenIdAndReportingPeriod(client, employee.id, reportingPeriod).isEmpty()) {
                         treatmentBuilder(employee, reportRow, reportingPeriod)
                     } else {
                         //treatment существует, ищем запись сравниваем с текущей, большую записываем
-                        val treatments = treatmentRepo.findAllByClientAndTokenId(client, employee.id)
+                        val treatments = treatmentRepo.findAllByClientAndTokenIdAndReportingPeriod(client, employee.id, reportingPeriod)
                         val savedDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(treatments[0].contactDate)
                         val newDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(reportRow[1])
 
@@ -85,12 +86,12 @@ class EmployeeReportController {
                 }
             }
         }
-        val dupTreatments = treatmentRepo!!.findDub()
+       val  dupTreatments = treatmentRepo!!.findDub()
         for (dupTreatment in dupTreatments) {
             val duplicate = with(dupTreatment) { Duplicate(id, tokenId, client, contactDate, reportingPeriod) }
             duplicatesRepo!!.save(duplicate)
         }
-        return dupTreatments
+         return dupTreatments!!
     }
 
     private fun treatmentBuilder(

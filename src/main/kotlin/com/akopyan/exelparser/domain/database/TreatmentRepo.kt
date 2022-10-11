@@ -7,7 +7,11 @@ import org.springframework.transaction.annotation.Transactional
 
 
 interface TreatmentRepo : CrudRepository<Treatment, Int> {
-    fun findAllByClientAndTokenId(clientId: Int, tokenId: Int): List<Treatment>
+    fun findAllByClientAndTokenIdAndReportingPeriod(
+        clientId: Int,
+        tokenId: Int,
+        reportingPeriod: String
+    ): List<Treatment>
 
     @Transactional
     @Modifying

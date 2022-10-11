@@ -30,14 +30,14 @@
 </div>
 <p></p>
 <div>
-    <form>
-        <select name="select">
+    <form method="post" accept-charset="UTF-8">
+        <select name="selectPeriod">
             {{#reportPeriod}}
                 <option value={{.}}>{{.}}</option>
             {{/reportPeriod}}
         </select>
-        <input type="submit" value="generate report">
-        <input type="submit" value="generate duplicates">
+        <input type="submit" name="reportType" value="MAIN" >
+        <input type="submit" name="reportType" value="DUPLICATES">
     </form>
 </div>
 <div>
@@ -62,6 +62,30 @@
                 <td> {{city}} </td>
             </tr>
         {{/reports}}
+        </tbody>
+    </table>
+    </p>
+</div>
+<div>
+    <p>
+    <table id="table">
+        <thead>
+        <tr>
+            <th>token</th>
+            <th>client</th>
+            <th>contact date</th>
+            <th>report period</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#duplicates}}
+            <tr>
+                <td>{{tokenId}}</td>
+                <td>{{client}}</td>
+                <td><b>{{contactDate}}</b></td>
+                <td>{{reportingPeriod}} </td>
+            </tr>
+        {{/duplicates}}
         </tbody>
     </table>
     </p>
