@@ -8,27 +8,15 @@ interface ReportRepo : CrudRepository<Report, Int> {
 
     @Query(
         "select " +
-                "tre.id, " +
-                "tre.reporting_period, " +
-                "emp.token, " +
-                "tre.client, " +
-                "cli.name, " +
-                "cli.city, " +
-                "fin.netto " +
+                "fin.reporting_period " +
                 "from " +
-                "EMPLOYEE emp, " +
-                "TREATMENT tre, " +
-                "CLIENT cli, " +
-                "FINANCES fin, " +
-                "ACCOUNT acc " +
-                "where emp.id = tre.token_id and cli.client_id = tre.client and acc.client_id = cli.id and fin.ACCOUNT_ID = acc.id",
+                "FINANCES fin ",
         nativeQuery = true
     )
-    fun generateReport(): List<Report>
+    fun getReportPeriod(): List<String>
 
     @Query(
         "select " +
-                "tre.id, " +
                 "tre.reporting_period, " +
                 "emp.token, " +
                 "tre.client, " +
@@ -45,7 +33,8 @@ interface ReportRepo : CrudRepository<Report, Int> {
                 "and cli.client_id = tre.client " +
                 "and acc.client_id = cli.id " +
                 "and fin.ACCOUNT_ID = acc.id " +
-                "and tre.reporting_period = :reportingPeriod ",
+                "and tre.reporting_period = :reportingPeriod " +
+                "and tre.reporting_period = fin.reporting_period",
         nativeQuery = true
     )
     fun generateReportForReportingPeriod(reportingPeriod: String): List<Report>

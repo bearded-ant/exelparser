@@ -1,18 +1,17 @@
 package com.akopyan.exelparser.ui
 
-import com.akopyan.exelparser.domain.database.DuplicatesRepo
-import com.akopyan.exelparser.domain.database.EmployeeRepo
-import com.akopyan.exelparser.domain.database.ReportRepo
+import com.akopyan.exelparser.domain.database.*
+import com.akopyan.exelparser.utils.SaveReport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
-@RequestMapping()
 class ReportController {
+
+    val saveReport: SaveReport = SaveReport()
 
     @Autowired
     private val reportRepo: ReportRepo? = null
@@ -26,12 +25,11 @@ class ReportController {
     @GetMapping(path = ["/report"])
     fun showBlanc(model: MutableMap<String, Any>): String {
 
-        val report = reportRepo!!.generateReport()
+        val reportPeriod = reportRepo!!.getReportPeriod()
         val period = mutableSetOf<String>()
-        for (reportRow in report)
-            period.add(reportRow.reportingPeriod)
+        for (reportRow in reportPeriod)
+            period.add(reportRow)
         model["reportPeriod"] = period
-//        model["reports"] = report
         return "report"
     }
 
@@ -44,36 +42,63 @@ class ReportController {
 
         val reportWithPeriod = reportRepo!!.generateReportForReportingPeriod(selectPeriod)
 
-        val report = reportRepo.generateReport()
+        val reportPeriod = reportRepo.getReportPeriod()
         val period = mutableSetOf<String>()
-        for (reportRow in report)
-            period.add(reportRow.reportingPeriod)
+        for (reportRow in reportPeriod)
+            period.add(reportRow)
         model["reportPeriod"] = period
         if (reportType == "MAIN") {
             model["reports"] = reportWithPeriod
 
-            val stringReport: MutableList<MutableList<String>> = mutableListOf()
-            for (reportRow in reportWithPeriod) {
-
+            val stringFormattedReport: MutableList<List<String>> = mutableListOf()
+            for (i in 0..reportWithPeriod.lastIndex) {
+                stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
             }
-            val row: MutableList<String> = mutableListOf()
-
+            saveReport.saveReport(stringFormattedReport, "/home/ant/employeeReport.xlsx")
 
         } else {
             val duplicatesReport = duplicatesRepo!!.findAll()
             val result: MutableList<Any> = mutableListOf()
+            val stringFormattedReport: MutableList<List<String>> = mutableListOf()
 
             for (value in duplicatesReport) {
+                val token: String = employeeRepo!!.findById(value.tokenId).get().token
                 val resultRow = object {
-                    val token: String = employeeRepo!!.findById(value.tokenId).get().token
+                    val token: String = token
                     val client: Int = value.client
                     val contactDate: String = value.contactDate
                     val reportingPeriod: String = value.reportingPeriod
                 }
                 result.add(resultRow)
+                stringFormattedReport.add(duplicatesReportToRow(value, token))
             }
+            saveReport.saveReport(stringFormattedReport, "/home/ant/duplicateReport.xlsx")
             model["duplicates"] = result
         }
         return "report"
+    }
+
+    private fun duplicatesReportToRow(value: Duplicate, token:String): List<String> {
+        val row = mutableListOf<String>()
+        with(value) {
+            row.add(token)
+            row.add(client.toString())
+            row.add(contactDate)
+            row.add(reportingPeriod)
+        }
+        return row
+    }
+
+    private fun reportToRow(reportWithPeriod: Report): List<String> {
+        val row = mutableListOf<String>()
+        with(reportWithPeriod) {
+            row.add(client.toString())
+            row.add(name)
+            row.add(netto)
+            row.add(token)
+            row.add(city)
+            row.add(reportingPeriod)
+        }
+        return row
     }
 }
