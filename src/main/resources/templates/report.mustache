@@ -25,23 +25,35 @@
 <div id="padding-bottom"></div>
 
 
-    <div class="column" style="background-color:#bbb;">
-        <h1>Report <span>simple summary report</span></h1>
-    </div>
-    <div>
-        <p>
-        <table id="table">
-            <thead>
-            <tr>
-                <th>Client</th>
-                <th>Name</th>
-                <th>Netto</th>
-                <th>Token</th>
-                <th>City</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{#reports}}
+<div class="column" style="background-color:#bbb;">
+    <h1>Report <span>simple summary report</span></h1>
+</div>
+<p></p>
+<div>
+    <form>
+        <select name="select">
+            {{#periodvalues}}
+                <option value="s1">{{period}}</option>
+            {{/periodvalues}}
+        </select>
+        <input type="submit" value="generate report">
+        <input type="submit" value="generate duplicates">
+    </form>
+</div>
+<div>
+    <p>
+    <table id="table">
+        <thead>
+        <tr>
+            <th>Client</th>
+            <th>Name</th>
+            <th>Netto</th>
+            <th>Token</th>
+            <th>City</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#reports}}
             <tr>
                 <td>{{client}}</td>
                 <td>{{name}}</td>
@@ -49,11 +61,11 @@
                 <td>{{token}} </td>
                 <td> {{city}} </td>
             </tr>
-              {{/reports}}
-            </tbody>
-        </table>
-        </p>
-    </div>
+        {{/reports}}
+        </tbody>
+    </table>
+    </p>
+</div>
 </div>
 
 </body>
