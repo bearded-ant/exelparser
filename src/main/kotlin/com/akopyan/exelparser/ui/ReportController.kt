@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.text.DecimalFormat
 
 @Controller
 class ReportController {
@@ -80,7 +81,7 @@ class ReportController {
         return "report"
     }
 
-    private fun duplicatesReportToRow(value: Duplicates, token:String): List<String> {
+    private fun duplicatesReportToRow(value: Duplicates, token: String): List<String> {
         val row = mutableListOf<String>()
         with(value) {
             row.add(token)
@@ -96,11 +97,15 @@ class ReportController {
         with(reportsWithPeriod) {
             row.add(client.toString())
             row.add(name)
-            row.add(netto)
+            row.add(getFloatFormattedString(netto))
             row.add(token)
             row.add(city)
-            row.add(reportingPeriod)
         }
         return row
+    }
+
+    private fun getFloatFormattedString(string: Float): String {
+        val decFormat = DecimalFormat("#.##")
+        return decFormat.format(string)
     }
 }

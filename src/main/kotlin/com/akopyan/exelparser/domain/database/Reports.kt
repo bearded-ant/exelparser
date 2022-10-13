@@ -8,8 +8,7 @@ data class Reports(
     @Id
     val client: Int = 0,
     val name: String = "",
-    val netto: String = "",
+    val netto: Float = 0F,
     val token: String = "",
-    val city: String = "",
-    val reportingPeriod: String =""
+    val city: String = ""
 )
