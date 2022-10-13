@@ -4,6 +4,9 @@ import com.akopyan.exelparser.domain.Folder
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 
+private const val BASE_PATH: String = "/home/ant/akopyan/"
+//private const val BASE_PATH: String = ""
+
 private const val EXT_ERROR = "extension file wrong"
 private const val BODY_ERROR = "file name contains invalid characters"
 private const val ENDING_ERROR = "there is no report period in the file name"
@@ -31,6 +34,14 @@ class FileNameUtils {
         return checkResults
     }
 
+    fun allFilenamesOk(folders: List<Folder>): Boolean {
+        var result = true
+        for (folder in folders) {
+            result = result && folder.status
+        }
+        return result
+    }
+
     fun parseNameToTokenAndTimeStamp(fileName: String): Map<String, String> {
         var dateStamp = ""
         var token = ""
@@ -48,5 +59,5 @@ class FileNameUtils {
         return result
     }
 
-    fun checkFileExists(path: String): Boolean = File(path).isFile
+    fun checkFileExists(path: String): Boolean = File("$BASE_PATH${path}").isFile
 }

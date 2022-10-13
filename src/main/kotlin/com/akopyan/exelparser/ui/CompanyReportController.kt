@@ -1,5 +1,6 @@
 package com.akopyan.exelparser.ui
 
+import com.akopyan.exelparser.domain.Folder
 import com.akopyan.exelparser.domain.database.*
 import com.akopyan.exelparser.utils.FileNameUtils
 import com.akopyan.exelparser.utils.ParserCompanyReport
@@ -36,47 +37,56 @@ class CompanyReportController {
         @RequestParam companyReportFolder: List<MultipartFile>,
         model: MutableMap<String, Any>
     ): String {
-        updateDb(companyReportFolder)
-        model["companyReportFolder"] = "company"
+
+        val folders = updateDb(companyReportFolder)
+
+        model["companyReportFolder"] = folders
         return "company"
     }
 
-    private fun updateDb(folderName: List<MultipartFile>) {
+    private fun updateDb(folderName: List<MultipartFile>): List<Folder> {
 
-        for (file in folderName) {
+        val folders = fileNameChecker.fileNameCheck(folderName)
 
-            val timeStamp = fileNameChecker.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
-            val branch = fileNameChecker.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
-            val reportFile = parser.parseCompanyReport(file.originalFilename!!)
+        if (fileNameChecker.allFilenamesOk(folders)) {
 
-            for (i in 0..reportFile.lastIndex) {
-                val reportStringHashCode: Int = ("${reportFile[i]}${timeStamp}").hashCode()
-                val dbEntityHashCode = financeRepository!!.findAllByHash(reportStringHashCode)
+            for (folderName in folders) {
 
-                if (dbEntityHashCode.isEmpty()) {
-                    val reportRow = reportFile[i]
-                    if (clientsRepo!!.findAllByClient(reportRow[1].toInt()).isEmpty()) {
+                val timeStamp =
+                    fileNameChecker.parseNameToTokenAndTimeStamp(folderName.folderName).getValue("dateStamp")
+                val branch = fileNameChecker.parseNameToTokenAndTimeStamp(folderName.folderName).getValue("token")
 
-                        createAllTablesEntity(reportRow, reportStringHashCode, timeStamp, branch)
+                val reportFile = parser.parseCompanyReport(folderName.folderName)
 
-                    } else {
-                        val client = clientsRepo.findAllByClient(reportRow[1].toInt())
-                        if (accountsRepo!!.findAllByAccount(reportRow[3]).isEmpty()) {
-                            createAccountAndFinancesTableEntity(
-                                reportRow,
-                                client[0].id,
-                                reportStringHashCode,
-                                timeStamp,
-                            )
+                for (i in 0..reportFile.lastIndex) {
+                    val reportStringHashCode: Int = ("${reportFile[i]}${timeStamp}").hashCode()
+                    val dbEntityHashCode = financeRepository!!.findAllByHash(reportStringHashCode)
+
+                    if (dbEntityHashCode.isEmpty()) {
+                        val reportRow = reportFile[i]
+                        if (clientsRepo!!.findAllByClient(reportRow[1].toInt()).isEmpty()) {
+
+                            createAllTablesEntity(reportRow, reportStringHashCode, timeStamp, branch)
+
                         } else {
-                            val account = accountsRepo.findAllByAccount(reportRow[3])
-                            createFinanceTableEntity(reportRow, account[0].id, reportStringHashCode, timeStamp)
+                            val client = clientsRepo.findAllByClient(reportRow[1].toInt())
+                            if (accountsRepo!!.findAllByAccount(reportRow[3]).isEmpty()) {
+                                createAccountAndFinancesTableEntity(
+                                    reportRow,
+                                    client[0].id,
+                                    reportStringHashCode,
+                                    timeStamp,
+                                )
+                            } else {
+                                val account = accountsRepo.findAllByAccount(reportRow[3])
+                                createFinanceTableEntity(reportRow, account[0].id, reportStringHashCode, timeStamp)
+                            }
                         }
                     }
                 }
             }
-        }
-//            files.add(Folder(file.originalFilename))
+        } else return folders
+        return folders
     }
 
     private fun createFinanceTableEntity(
@@ -139,7 +149,7 @@ class CompanyReportController {
             floating = reportFile[6],
             bonusRISK = reportFile[7],
             deposit = convertToFloat(reportFile[8]),
-            netto =  convertToFloat(reportFile[9]),
+            netto = convertToFloat(reportFile[9]),
             bonusPIPS = reportFile[10],
             IbPayment = reportFile[11],
             hash = hashCode,
@@ -148,7 +158,7 @@ class CompanyReportController {
 
     private fun convertToFloat(s: String): Float {
 //        val decFormat = DecimalFormat("#.##")
-        val replaceSpace = s.replace(" ","")
+        val replaceSpace = s.replace(" ", "")
         val replaceComma = replaceSpace.replace(",", ".")
         return replaceComma.toFloat()
     }
