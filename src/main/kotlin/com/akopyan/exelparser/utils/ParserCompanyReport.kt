@@ -14,23 +14,7 @@ private const val ROW_START_INDEX: Int = 7
 
 class ParserCompanyReport() {
 
-    fun parseNameToTokenAndTimeStamp(fileName: String): Map<String, String> {
-        val regex = Regex("""\d{4}_\d{1,2}""")
-        var dateStamp = ""
-        var token = ""
-        if (regex.containsMatchIn(fileName)) {
-            dateStamp = regex.find(fileName)!!.value
-            val nameLength = fileName.length
-            val endingLength = dateStamp.length + 6
-            val slashIndex = if (fileName.lastIndexOf('\\') == -1) fileName.lastIndexOf('/') else fileName.lastIndexOf('\\')
-            token = fileName.substring(slashIndex+1, (nameLength - endingLength))
-        }
-        val result = mutableMapOf<String, String>()
-        result["dateStamp"] = dateStamp
-        result["token"] = token
-        return result
-    }
-
+    private val fileNameChecker: FileNameUtils = FileNameUtils()
 
     fun parseCompanyReport(pathToFile: String): List<List<String>> {
 
@@ -39,7 +23,7 @@ class ParserCompanyReport() {
         val changePrice = mutableListOf<MutableList<String>>()
         var counter = 0
 
-        if (checkFileExists(pathUri)) {
+        if (fileNameChecker.checkFileExists(pathUri)) {
             exelPrice = readPriceToArray(pathUri)
             for (i in ROW_START_INDEX until exelPrice.lastIndex) {
                 if ((exelPrice[i].isNotEmpty()) && (exelPrice[i][COLUM_INDEX[0]].isNotEmpty())) {
@@ -59,7 +43,5 @@ class ParserCompanyReport() {
         val newBook = ExelFileRepoImpl().openBook(pathUri)
         return ExelFileRepoImpl().getExelData(newBook, SHEET_NAME)
     }
-
-    private fun checkFileExists(path: String): Boolean = File(path).isFile
 
 }

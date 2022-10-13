@@ -1,7 +1,7 @@
 package com.akopyan.exelparser.ui
 
-import com.akopyan.exelparser.domain.Folder
 import com.akopyan.exelparser.domain.database.*
+import com.akopyan.exelparser.utils.FileNameUtils
 import com.akopyan.exelparser.utils.ParserEmployeeReport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat
 class EmployeeReportController {
 
     private val parser: ParserEmployeeReport = ParserEmployeeReport()
+    private val fileNameChecker: FileNameUtils = FileNameUtils()
 
     @Autowired
     private val employeesRepo: EmployeesRepo? = null
@@ -37,7 +38,6 @@ class EmployeeReportController {
         @RequestParam employeeReportFolder: List<MultipartFile>,
         model: MutableMap<String, Any>
     ): String {
-        val files = mutableListOf<Folder>()
 
         val duplicates = updateDb(employeeReportFolder)
         model["duplicates"] = duplicates
@@ -52,13 +52,13 @@ class EmployeeReportController {
 
         for (file in folderName) {
 
-            val reportingPeriod = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
-            val token = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
+            val reportingPeriod = fileNameChecker.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
+            val token = fileNameChecker.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
             val reportFile = parser.parseEmployeeReport(file.originalFilename!!)
 
             for (i in 0..reportFile.lastIndex) {
                 val reportRow = reportFile[i]
-                //если не записи employee создаем ее и обращение
+                //если нет записи employee создаем ее и обращение
                 if (employeesRepo!!.findAllByToken(token).isEmpty()) {
 
                     val employees = Employees(0, token)

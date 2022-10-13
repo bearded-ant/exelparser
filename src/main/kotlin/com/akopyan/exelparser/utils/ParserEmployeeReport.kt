@@ -2,33 +2,15 @@ package com.akopyan.exelparser.utils
 
 import com.akopyan.exelparser.data.ExelFileRepoImpl
 import java.io.File
-import java.text.DecimalFormat
 
 private const val BASE_PATH: String = "/home/ant/akopyan/"
 //private const val BASE_PATH: String = ""
 private const val SHEET_NAME: String = "Лист1"
 private val COLUM_INDEX: ArrayList<Int> = arrayListOf(0, 2)
 private const val ROW_START_INDEX: Int = 0
-private val decFormat = DecimalFormat("#.##")
+
 
 class ParserEmployeeReport() {
-
-    fun parseNameToTokenAndTimeStamp(fileName: String): Map<String, String> {
-        val regex = Regex("""\d{4}_\d{1,2}""")
-        var dateStamp = ""
-        var token = ""
-        if (regex.containsMatchIn(fileName)) {
-            dateStamp = regex.find(fileName)!!.value
-            val nameLength = fileName.length
-            val endingLength = dateStamp.length + 6
-            val slashIndex = if (fileName.lastIndexOf('\\') == -1) fileName.lastIndexOf('/') else fileName.lastIndexOf('\\')
-            token = fileName.substring(slashIndex+1, (nameLength - endingLength))
-        }
-        val result = mutableMapOf<String, String>()
-        result["dateStamp"] = dateStamp
-        result["token"] = token
-        return result
-    }
 
     fun parseEmployeeReport(pathToFile: String): List<List<String>> {
 

@@ -1,6 +1,7 @@
 package com.akopyan.exelparser.ui
 
 import com.akopyan.exelparser.domain.database.*
+import com.akopyan.exelparser.utils.FileNameUtils
 import com.akopyan.exelparser.utils.ParserCompanyReport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile
 class CompanyReportController {
 
     private val parser: ParserCompanyReport = ParserCompanyReport()
+    private val fileNameChecker: FileNameUtils = FileNameUtils()
 
     @Autowired
     private val financeRepository: FinancesRepo? = null
@@ -43,8 +45,8 @@ class CompanyReportController {
 
         for (file in folderName) {
 
-            val timeStamp = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
-            val branch = parser.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
+            val timeStamp = fileNameChecker.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("dateStamp")
+            val branch = fileNameChecker.parseNameToTokenAndTimeStamp(file.originalFilename!!).getValue("token")
             val reportFile = parser.parseCompanyReport(file.originalFilename!!)
 
             for (i in 0..reportFile.lastIndex) {
