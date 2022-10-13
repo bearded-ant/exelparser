@@ -4,8 +4,8 @@ import com.akopyan.exelparser.data.ExelFileRepoImpl
 import java.io.File
 import java.text.DecimalFormat
 
-//private const val BASE_PATH: String = "/home/ant/akopyan/"
-private const val BASE_PATH: String = ""
+private const val BASE_PATH: String = "/home/ant/akopyan/"
+//private const val BASE_PATH: String = ""
 private const val SHEET_NAME: String = "Лист1"
 private val COLUM_INDEX: ArrayList<Int> = arrayListOf(0, 2)
 private const val ROW_START_INDEX: Int = 0
@@ -43,7 +43,7 @@ class ParserEmployeeReport() {
                 if (exelReport[i].isNotEmpty()) {
                     val row = arrayListOf<String>()
                     for (j in COLUM_INDEX)
-                        row.add(getFloatFormattedString(exelReport[i][j]))
+                        row.add(exelReport[i][j])
                     parsedReport.add(row)
                     println(parsedReport[counter].toString())
                     counter++
@@ -59,9 +59,5 @@ class ParserEmployeeReport() {
     }
 
     private fun checkFileExists(path: String): Boolean = File(path).isFile
-
-    private fun getFloatFormattedString(cellValue: String) =
-        if (cellValue.toFloatOrNull() != null) decFormat.format(cellValue.toFloat())
-            .toString() else cellValue
 
 }

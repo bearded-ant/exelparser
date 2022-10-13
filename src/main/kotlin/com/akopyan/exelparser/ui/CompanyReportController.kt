@@ -1,6 +1,5 @@
 package com.akopyan.exelparser.ui
 
-import com.akopyan.exelparser.domain.Folder
 import com.akopyan.exelparser.domain.database.*
 import com.akopyan.exelparser.utils.ParserCompanyReport
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
+import java.text.DecimalFormat
 
 @Controller
 @RequestMapping()
@@ -35,10 +35,7 @@ class CompanyReportController {
         @RequestParam companyReportFolder: List<MultipartFile>,
         model: MutableMap<String, Any>
     ): String {
-        val files = mutableListOf<Folder>()
-
         updateDb(companyReportFolder)
-
         model["companyReportFolder"] = "company"
         return "company"
     }
@@ -140,11 +137,18 @@ class CompanyReportController {
             clearing = reportFile[5],
             floating = reportFile[6],
             bonusRISK = reportFile[7],
-            deposit = reportFile[8],
-            netto = reportFile[9],
+            deposit = convertToFloat(reportFile[8]),
+            netto =  convertToFloat(reportFile[9]),
             bonusPIPS = reportFile[10],
             IbPayment = reportFile[11],
             hash = hashCode,
             reportingPeriod = reportDate
         )
+
+    private fun convertToFloat(s: String): Float {
+        val decFormat = DecimalFormat("#.##")
+        var resultString = s.replace(" ","")
+        return decFormat.format(resultString.replace(",", ".")).toFloat()
+    }
 }
+

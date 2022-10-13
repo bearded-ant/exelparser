@@ -5,12 +5,12 @@ import com.akopyan.exelparser.data.ExelFileRepoImpl
 import java.io.File
 import java.text.DecimalFormat
 
-//private const val BASE_PATH: String = "/home/ant/akopyan/"
-private const val BASE_PATH: String = ""
+private const val BASE_PATH: String = "/home/ant/akopyan/"
+//private const val BASE_PATH: String = ""
 private const val SHEET_NAME: String = "Detailed franchisee"
 private val COLUM_INDEX: ArrayList<Int> = arrayListOf(0, 1, 2, 3, 4, 8, 12, 16, 20, 28, 32, 33)
 private const val ROW_START_INDEX: Int = 7
-private val decFormat = DecimalFormat("#.##")
+
 
 class ParserCompanyReport() {
 
@@ -45,7 +45,7 @@ class ParserCompanyReport() {
                 if ((exelPrice[i].isNotEmpty()) && (exelPrice[i][COLUM_INDEX[0]].isNotEmpty())) {
                     val row = arrayListOf<String>()
                     for (j in COLUM_INDEX)
-                        row.add(getFloatFormattedString(exelPrice[i][j]))
+                        row.add(exelPrice[i][j])
                     changePrice.add(row)
                     println(changePrice[counter].toString())
                     counter++
@@ -54,11 +54,6 @@ class ParserCompanyReport() {
             return changePrice
         } else return changePrice
     }
-
-    private fun getFloatFormattedString(
-        cellValue: String
-    ) = if (cellValue.toFloatOrNull() != null) decFormat.format(cellValue.toFloat())
-        .toString() else cellValue
 
     private fun readPriceToArray(pathUri: String): List<List<String>> {
         val newBook = ExelFileRepoImpl().openBook(pathUri)

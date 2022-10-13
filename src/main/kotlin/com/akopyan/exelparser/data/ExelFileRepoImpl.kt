@@ -45,10 +45,9 @@ class ExelFileRepoImpl : ExelFileRepo {
             val string = mutableListOf<String>()
 
             while (cellIterator.hasNext()) {
-                val sdf = DataFormatter(true)
+                val sdf = DataFormatter()
                 val cell = sdf.formatCellValue(cellIterator.next(), evaluator)
-                val cellValue = cell.toString()
-                string.add(cellValue)
+                string.add(cell)
             }
             exelData.add(string)
         }
