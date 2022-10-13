@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 
 
-interface TreatmentRepo : CrudRepository<Treatments, Int> {
+interface TreatmentsRepo : CrudRepository<Treatments, Int> {
     fun findAllByClientAndTokenIdAndReportingPeriod(
         clientId: Int,
         tokenId: Int,
@@ -15,14 +15,14 @@ interface TreatmentRepo : CrudRepository<Treatments, Int> {
 
     @Transactional
     @Modifying
-    @Query("update Treatment t set t.contactDate = :contactDate where t.client = :client and t.tokenId = :tokenId")
+    @Query("update Treatments t set t.contactDate = :contactDate where t.client = :client and t.tokenId = :tokenId")
     fun updateContactDate(contactDate: String, client: Int, tokenId: Int)
 
     @Query(
         "SELECT st.* " +
-                "FROM Treatment st " +
+                "FROM Treatments st " +
                 "WHERE st.client IN  " +
-                "(SELECT st.client FROM Treatment st GROUP BY st.client HAVING COUNT(*) > 1)  " +
+                "(SELECT st.client FROM Treatments st GROUP BY st.client HAVING COUNT(*) > 1)  " +
                 "ORDER BY st.client", nativeQuery = true
     )
     fun findDub(): List<Treatments>

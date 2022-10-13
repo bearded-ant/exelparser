@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
 
-interface ReportRepo : CrudRepository<Reports, Int> {
+interface ReportsRepo : CrudRepository<Reports, Int> {
 
     @Query(
         "select " +
@@ -24,13 +24,13 @@ interface ReportRepo : CrudRepository<Reports, Int> {
                 "cli.city, " +
                 "fin.netto " +
                 "from " +
-                "EMPLOYEE emp, " +
-                "TREATMENT tre, " +
-                "CLIENT cli, " +
+                "EMPLOYEES emp, " +
+                "TREATMENTS tre, " +
+                "CLIENTS cli, " +
                 "FINANCES fin, " +
-                "ACCOUNT acc " +
+                "ACCOUNTS acc " +
                 "where emp.id = tre.token_id " +
-                "and cli.client_id = tre.client " +
+                "and cli.client = tre.client " +
                 "and acc.client_id = cli.id " +
                 "and fin.ACCOUNT_ID = acc.id " +
                 "and tre.reporting_period = :reportingPeriod " +

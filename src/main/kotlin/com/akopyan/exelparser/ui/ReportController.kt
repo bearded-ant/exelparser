@@ -14,18 +14,18 @@ class ReportController {
     val saveReport: SaveReport = SaveReport()
 
     @Autowired
-    private val reportRepo: ReportRepo? = null
+    private val reportsRepo: ReportsRepo? = null
 
     @Autowired
     private val duplicatesRepo: DuplicatesRepo? = null
 
     @Autowired
-    private val employeeRepo: EmployeeRepo? = null
+    private val employeesRepo: EmployeesRepo? = null
 
     @GetMapping(path = ["/report"])
     fun showBlanc(model: MutableMap<String, Any>): String {
 
-        val reportPeriod = reportRepo!!.getReportPeriod()
+        val reportPeriod = reportsRepo!!.getReportPeriod()
         val period = mutableSetOf<String>()
         for (reportRow in reportPeriod)
             period.add(reportRow)
@@ -40,9 +40,9 @@ class ReportController {
         model: MutableMap<String, Any>
     ): String {
 
-        val reportWithPeriod = reportRepo!!.generateReportForReportingPeriod(selectPeriod)
+        val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriod(selectPeriod)
 
-        val reportPeriod = reportRepo.getReportPeriod()
+        val reportPeriod = reportsRepo.getReportPeriod()
         val period = mutableSetOf<String>()
         for (reportRow in reportPeriod)
             period.add(reportRow)
@@ -63,7 +63,7 @@ class ReportController {
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
 
             for (value in duplicatesReport) {
-                val token: String = employeeRepo!!.findById(value.tokenId).get().token
+                val token: String = employeesRepo!!.findById(value.tokenId).get().token
                 val resultRow = object {
                     val token: String = token
                     val client: Int = value.client

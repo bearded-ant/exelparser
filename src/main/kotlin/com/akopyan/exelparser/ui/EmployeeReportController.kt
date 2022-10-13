@@ -20,10 +20,10 @@ class EmployeeReportController {
     private val parser: ParserEmployeeReport = ParserEmployeeReport()
 
     @Autowired
-    private val employeeRepo: EmployeeRepo? = null
+    private val employeesRepo: EmployeesRepo? = null
 
     @Autowired
-    private val treatmentRepo: TreatmentRepo? = null
+    private val treatmentsRepo: TreatmentsRepo? = null
 
     @Autowired
     private val duplicatesRepo: DuplicatesRepo? = null
@@ -59,34 +59,34 @@ class EmployeeReportController {
             for (i in 0..reportFile.lastIndex) {
                 val reportRow = reportFile[i]
                 //если не записи employee создаем ее и обращение
-                if (employeeRepo!!.findAllByToken(token).isEmpty()) {
+                if (employeesRepo!!.findAllByToken(token).isEmpty()) {
 
                     val employees = Employees(0, token)
-                    employeeRepo.save(employees)
+                    employeesRepo.save(employees)
                     treatmentBuilder(employees, reportRow, reportingPeriod)
 
                 } else {
                     val client = reportRow[0].toInt()
-                    val employee = employeeRepo.findAllByToken(token)[0]
+                    val employee = employeesRepo.findAllByToken(token)[0]
                     //employee существует, ищем запись treatment. если такой нет - создаем
-                    if (treatmentRepo!!.findAllByClientAndTokenIdAndReportingPeriod(client, employee.id, reportingPeriod).isEmpty()) {
+                    if (treatmentsRepo!!.findAllByClientAndTokenIdAndReportingPeriod(client, employee.id, reportingPeriod).isEmpty()) {
                         treatmentBuilder(employee, reportRow, reportingPeriod)
                     } else {
                         //treatment существует, ищем запись сравниваем с текущей, большую записываем
-                        val treatments = treatmentRepo.findAllByClientAndTokenIdAndReportingPeriod(client, employee.id, reportingPeriod)
+                        val treatments = treatmentsRepo.findAllByClientAndTokenIdAndReportingPeriod(client, employee.id, reportingPeriod)
                         val savedDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(treatments[0].contactDate)
                         val newDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(reportRow[1])
 
                         for (treatment in treatments) {
                             if (savedDay < newDay) {
-                                treatmentRepo.updateContactDate(reportRow[1], reportRow[0].toInt(), treatment.tokenId)
+                                treatmentsRepo.updateContactDate(reportRow[1], reportRow[0].toInt(), treatment.tokenId)
                             }
                         }
                     }
                 }
             }
         }
-       val  dupTreatments = treatmentRepo!!.findDub()
+       val  dupTreatments = treatmentsRepo!!.findDub()
         for (dupTreatment in dupTreatments) {
             val duplicates = with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod) }
             duplicatesRepo!!.save(duplicates)
@@ -107,6 +107,6 @@ class EmployeeReportController {
                 contactDate = reportRow[1],
                 reportingPeriod = reportingPeriod
             )
-        treatmentRepo!!.save(treatments)
+        treatmentsRepo!!.save(treatments)
     }
 }

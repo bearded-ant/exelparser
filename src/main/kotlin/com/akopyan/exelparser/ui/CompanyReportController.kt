@@ -21,10 +21,10 @@ class CompanyReportController {
     private val financeRepository: FinancesRepo? = null
 
     @Autowired
-    private val clientRepo: ClientRepo? = null
+    private val clientsRepo: ClientsRepo? = null
 
     @Autowired
-    private val accountRepo: AccountRepo? = null
+    private val accountsRepo: AccountsRepo? = null
 
     @GetMapping(path = ["/company"])
     fun showBlanc(): String = "company"
@@ -53,13 +53,13 @@ class CompanyReportController {
 
                 if (dbEntityHashCode.isEmpty()) {
                     val reportRow = reportFile[i]
-                    if (clientRepo!!.findAllByClientId(reportRow[1].toInt()).isEmpty()) {
+                    if (clientsRepo!!.findAllByClient(reportRow[1].toInt()).isEmpty()) {
 
                         createAllTablesEntity(reportRow, reportStringHashCode, timeStamp, branch)
 
                     } else {
-                        val client = clientRepo.findAllByClientId(reportRow[1].toInt())
-                        if (accountRepo!!.findAllByAccount(reportRow[3]).isEmpty()) {
+                        val client = clientsRepo.findAllByClient(reportRow[1].toInt())
+                        if (accountsRepo!!.findAllByAccount(reportRow[3]).isEmpty()) {
                             createAccountAndFinancesTableEntity(
                                 reportRow,
                                 client[0].id,
@@ -67,7 +67,7 @@ class CompanyReportController {
                                 timeStamp,
                             )
                         } else {
-                            val account = accountRepo.findAllByAccount(reportRow[3])
+                            val account = accountsRepo.findAllByAccount(reportRow[3])
                             createFinanceTableEntity(reportRow, account[0].id, reportStringHashCode, timeStamp)
                         }
                     }
@@ -95,7 +95,7 @@ class CompanyReportController {
         timeStamp: String,
     ) {
         val account = accountBuilder(reportRow, clientId)
-        accountRepo!!.save(account)
+        accountsRepo!!.save(account)
         createFinanceTableEntity(reportRow, account.id, reportStringHashCode, timeStamp)
     }
 
@@ -106,9 +106,9 @@ class CompanyReportController {
         branch: String
     ) {
         val client = clientBuilder(reportRow, branch)
-        clientRepo!!.save(client)
+        clientsRepo!!.save(client)
         val account = accountBuilder(reportRow, client.id)
-        accountRepo!!.save(account)
+        accountsRepo!!.save(account)
         createFinanceTableEntity(reportRow, account.id, reportStringHashCode, timeStamp)
     }
 
