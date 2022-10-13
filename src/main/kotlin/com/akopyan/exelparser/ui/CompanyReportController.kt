@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.multipart.MultipartFile
-import java.text.DecimalFormat
 
 @Controller
 @RequestMapping()
@@ -114,16 +113,16 @@ class CompanyReportController {
     }
 
 
-    private fun clientBuilder(reportFile: List<String>, branch: String): Client =
-        Client(
+    private fun clientBuilder(reportFile: List<String>, branch: String): Clients =
+        Clients(
             id = 0,
-            clientId = reportFile[1].toInt(),
+            client = reportFile[1].toInt(),
             name = reportFile[2],
             city = branch
         )
 
-    private fun accountBuilder(reportFile: List<String>, clientId: Int): Account =
-        Account(
+    private fun accountBuilder(reportFile: List<String>, clientId: Int): Accounts =
+        Accounts(
             id = 0,
             clientId = clientId,
             account = reportFile[3],
@@ -146,9 +145,10 @@ class CompanyReportController {
         )
 
     private fun convertToFloat(s: String): Float {
-        val decFormat = DecimalFormat("#.##")
-        var resultString = s.replace(" ","")
-        return decFormat.format(resultString.replace(",", ".")).toFloat()
+//        val decFormat = DecimalFormat("#.##")
+        val replaceSpace = s.replace(" ","")
+        val replaceComma = replaceSpace.replace(",", ".")
+        return replaceComma.toFloat()
     }
 }
 

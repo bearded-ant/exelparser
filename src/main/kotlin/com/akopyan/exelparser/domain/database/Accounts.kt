@@ -6,11 +6,11 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-data class Client(
+data class Accounts(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int = 0,
     val clientId: Int = 0,
-    val name: String? = "",
-    val city: String = ""
+    val account: String = "",
+    val accountCurrency: String = "USD"
 )

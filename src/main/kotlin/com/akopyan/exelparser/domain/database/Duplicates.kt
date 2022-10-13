@@ -4,7 +4,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class Duplicate(
+data class Duplicates(
     @Id
     val id: Int = 0,
     val tokenId: Int = 0,

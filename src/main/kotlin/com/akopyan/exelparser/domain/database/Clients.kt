@@ -6,9 +6,11 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-data class Employee(
+data class Clients(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int = 0,
-    val token: String = ""
+    val client: Int = 0,
+    val name: String? = "",
+    val city: String = ""
 )

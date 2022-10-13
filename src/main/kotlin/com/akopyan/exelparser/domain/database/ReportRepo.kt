@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 
 
-interface ReportRepo : CrudRepository<Report, Int> {
+interface ReportRepo : CrudRepository<Reports, Int> {
 
     @Query(
         "select " +
@@ -37,5 +37,5 @@ interface ReportRepo : CrudRepository<Report, Int> {
                 "and tre.reporting_period = fin.reporting_period",
         nativeQuery = true
     )
-    fun generateReportForReportingPeriod(reportingPeriod: String): List<Report>
+    fun generateReportForReportingPeriod(reportingPeriod: String): List<Reports>
 }

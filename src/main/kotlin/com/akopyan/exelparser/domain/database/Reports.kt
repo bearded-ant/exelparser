@@ -4,7 +4,7 @@ import javax.persistence.Entity
 import javax.persistence.Id
 
 @Entity
-data class Report(
+data class Reports(
     @Id
     val client: Int = 0,
     val name: String = "",

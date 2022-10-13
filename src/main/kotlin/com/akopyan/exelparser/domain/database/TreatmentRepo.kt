@@ -6,12 +6,12 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.transaction.annotation.Transactional
 
 
-interface TreatmentRepo : CrudRepository<Treatment, Int> {
+interface TreatmentRepo : CrudRepository<Treatments, Int> {
     fun findAllByClientAndTokenIdAndReportingPeriod(
         clientId: Int,
         tokenId: Int,
         reportingPeriod: String
-    ): List<Treatment>
+    ): List<Treatments>
 
     @Transactional
     @Modifying
@@ -25,5 +25,5 @@ interface TreatmentRepo : CrudRepository<Treatment, Int> {
                 "(SELECT st.client FROM Treatment st GROUP BY st.client HAVING COUNT(*) > 1)  " +
                 "ORDER BY st.client", nativeQuery = true
     )
-    fun findDub(): List<Treatment>
+    fun findDub(): List<Treatments>
 }

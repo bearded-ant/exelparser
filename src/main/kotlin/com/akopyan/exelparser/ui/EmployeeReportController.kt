@@ -47,7 +47,7 @@ class EmployeeReportController {
     }
 
 
-    private fun updateDb(folderName: List<MultipartFile>): List<Treatment> {
+    private fun updateDb(folderName: List<MultipartFile>): List<Treatments> {
         //todo надо запилить проверку файлов на формат и содержимое
 
         for (file in folderName) {
@@ -61,9 +61,9 @@ class EmployeeReportController {
                 //если не записи employee создаем ее и обращение
                 if (employeeRepo!!.findAllByToken(token).isEmpty()) {
 
-                    val employee = Employee(0, token)
-                    employeeRepo.save(employee)
-                    treatmentBuilder(employee, reportRow, reportingPeriod)
+                    val employees = Employees(0, token)
+                    employeeRepo.save(employees)
+                    treatmentBuilder(employees, reportRow, reportingPeriod)
 
                 } else {
                     val client = reportRow[0].toInt()
@@ -88,25 +88,25 @@ class EmployeeReportController {
         }
        val  dupTreatments = treatmentRepo!!.findDub()
         for (dupTreatment in dupTreatments) {
-            val duplicate = with(dupTreatment) { Duplicate(id, tokenId, client, contactDate, reportingPeriod) }
-            duplicatesRepo!!.save(duplicate)
+            val duplicates = with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod) }
+            duplicatesRepo!!.save(duplicates)
         }
          return dupTreatments
     }
 
     private fun treatmentBuilder(
-        employee: Employee,
+        employees: Employees,
         reportRow: List<String>,
         reportingPeriod: String
     ) {
-        val treatment =
-            Treatment(
+        val treatments =
+            Treatments(
                 id = 0,
-                tokenId = employee.id,
+                tokenId = employees.id,
                 client = reportRow[0].toInt(),
                 contactDate = reportRow[1],
                 reportingPeriod = reportingPeriod
             )
-        treatmentRepo!!.save(treatment)
+        treatmentRepo!!.save(treatments)
     }
 }

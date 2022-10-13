@@ -54,8 +54,8 @@ class ReportController {
             for (i in 0..reportWithPeriod.lastIndex) {
                 stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
             }
-//            saveReport.saveReport(stringFormattedReport, "/home/ant/employeeReport.xlsx")
-            saveReport.saveReport(stringFormattedReport, "employeeReport.xlsx")
+            saveReport.saveReport(stringFormattedReport, "/home/ant/employeeReport.xlsx")
+//            saveReport.saveReport(stringFormattedReport, "employeeReport.xlsx")
 
         } else {
             val duplicatesReport = duplicatesRepo!!.findAll()
@@ -73,14 +73,14 @@ class ReportController {
                 result.add(resultRow)
                 stringFormattedReport.add(duplicatesReportToRow(value, token))
             }
-//            saveReport.saveReport(stringFormattedReport, "/home/ant/duplicateReport.xlsx")
-            saveReport.saveReport(stringFormattedReport, "duplicateReport.xlsx")
+            saveReport.saveReport(stringFormattedReport, "/home/ant/duplicateReport.xlsx")
+//            saveReport.saveReport(stringFormattedReport, "duplicateReport.xlsx")
             model["duplicates"] = result
         }
         return "report"
     }
 
-    private fun duplicatesReportToRow(value: Duplicate, token:String): List<String> {
+    private fun duplicatesReportToRow(value: Duplicates, token:String): List<String> {
         val row = mutableListOf<String>()
         with(value) {
             row.add(token)
@@ -91,9 +91,9 @@ class ReportController {
         return row
     }
 
-    private fun reportToRow(reportWithPeriod: Report): List<String> {
+    private fun reportToRow(reportsWithPeriod: Reports): List<String> {
         val row = mutableListOf<String>()
-        with(reportWithPeriod) {
+        with(reportsWithPeriod) {
             row.add(client.toString())
             row.add(name)
             row.add(netto)

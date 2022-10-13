@@ -6,11 +6,9 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-data class Account(
+data class Employees(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int = 0,
-    val clientId: Int = 0,
-    val account: String = "",
-    val accountCurrency: String = "USD"
+    val token: String = ""
 )
