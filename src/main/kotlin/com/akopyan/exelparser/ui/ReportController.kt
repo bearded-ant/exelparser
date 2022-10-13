@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.text.DecimalFormat
 
+private const val EMPLOYEE_PATH:String = "/home/ant/employeeReport.xlsx"
+//private const val EMPLOYEE_PATH:String = "employeeReport.xlsx"
+private const val DUPLICATES_PATH:String = "/home/ant/duplicateReport.xlsx"
+//private const val DUPLICATES_PATH:String = "duplicateReport.xlsx"
+
 @Controller
 class ReportController {
 
@@ -55,8 +60,7 @@ class ReportController {
             for (i in 0..reportWithPeriod.lastIndex) {
                 stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
             }
-            saveReport.saveReport(stringFormattedReport, "/home/ant/employeeReport.xlsx")
-//            saveReport.saveReport(stringFormattedReport, "employeeReport.xlsx")
+            saveReport.saveReport(stringFormattedReport, EMPLOYEE_PATH)
 
         } else {
             val duplicatesReport = duplicatesRepo!!.findAll()
@@ -74,8 +78,7 @@ class ReportController {
                 result.add(resultRow)
                 stringFormattedReport.add(duplicatesReportToRow(value, token))
             }
-            saveReport.saveReport(stringFormattedReport, "/home/ant/duplicateReport.xlsx")
-//            saveReport.saveReport(stringFormattedReport, "duplicateReport.xlsx")
+            saveReport.saveReport(stringFormattedReport, DUPLICATES_PATH)
             model["duplicates"] = result
         }
         return "report"
