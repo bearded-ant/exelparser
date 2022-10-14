@@ -47,9 +47,9 @@ class EmployeeReportController {
     }
 
 
-    private fun updateDb(folders: List<MultipartFile>): List<Folder> {
+    private fun updateDb(foldersList: List<MultipartFile>): List<Folder> {
 
-        val folders = fileNameChecker.fileNameCheck(folders)
+        val folders = fileNameChecker.fileNameCheck(foldersList)
 
         if (fileNameChecker.allFilenamesOk(folders)) {
 
@@ -104,7 +104,9 @@ class EmployeeReportController {
                 }
             }
             val dupTreatments = treatmentsRepo!!.findDub()
+
             for (dupTreatment in dupTreatments) {
+                treatmentsRepo.delete(dupTreatment)
                 val duplicates = with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod) }
                 duplicatesRepo!!.save(duplicates)
             }
