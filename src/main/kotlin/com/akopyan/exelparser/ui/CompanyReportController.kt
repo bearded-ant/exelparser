@@ -44,9 +44,9 @@ class CompanyReportController {
         return "company"
     }
 
-    private fun updateDb(folderName: List<MultipartFile>): List<Folder> {
+    private fun updateDb(foldersList: List<MultipartFile>): List<Folder> {
 
-        val folders = fileNameChecker.fileNameCheck(folderName)
+        val folders = fileNameChecker.fileNameCheck(foldersList)
 
         if (fileNameChecker.allFilenamesOk(folders)) {
 

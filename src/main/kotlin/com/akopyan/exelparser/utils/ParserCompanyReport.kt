@@ -2,6 +2,7 @@ package com.akopyan.exelparser.utils
 
 
 import com.akopyan.exelparser.data.ExelFileRepoImpl
+import java.io.File
 
 class ParserCompanyReport() {
 
@@ -15,7 +16,7 @@ class ParserCompanyReport() {
         val changePrice = mutableListOf<MutableList<String>>()
         var counter = 0
 
-        if (fileNameChecker.checkFileExists(pathUri)) {
+        if (checkFileExists(pathUri)) {
             exelPrice = readPriceToArray(pathUri)
             for (i in baseValues.ROW_START_INDEX_C until exelPrice.lastIndex) {
                 if ((exelPrice[i].isNotEmpty()) && (exelPrice[i][baseValues.COLUM_INDEX_C[0]].isNotEmpty())) {
@@ -35,4 +36,6 @@ class ParserCompanyReport() {
         val newBook = ExelFileRepoImpl().openBook(pathUri)
         return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_NAME_C)
     }
+
+    private fun checkFileExists(path: String): Boolean = File(path).isFile
 }

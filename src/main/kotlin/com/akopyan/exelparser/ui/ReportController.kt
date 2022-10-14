@@ -1,6 +1,7 @@
 package com.akopyan.exelparser.ui
 
 import com.akopyan.exelparser.domain.database.*
+import com.akopyan.exelparser.utils.BaseValues
 import com.akopyan.exelparser.utils.SaveReport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -9,15 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import java.text.DecimalFormat
 
-private const val EMPLOYEE_PATH:String = "/home/ant/employeeReport.xlsx"
-//private const val EMPLOYEE_PATH:String = "employeeReport.xlsx"
-private const val DUPLICATES_PATH:String = "/home/ant/duplicateReport.xlsx"
-//private const val DUPLICATES_PATH:String = "duplicateReport.xlsx"
 
 @Controller
 class ReportController {
-
-    val saveReport: SaveReport = SaveReport()
+    private val baseValues: BaseValues = BaseValues()
+    private val saveReport: SaveReport = SaveReport()
 
     @Autowired
     private val reportsRepo: ReportsRepo? = null
@@ -27,6 +24,9 @@ class ReportController {
 
     @Autowired
     private val employeesRepo: EmployeesRepo? = null
+
+    @Autowired
+    private val treatmentsRepo: TreatmentsRepo? = null
 
     @GetMapping(path = ["/report"])
     fun showBlanc(model: MutableMap<String, Any>): String {
@@ -48,6 +48,8 @@ class ReportController {
 
         val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriod(selectPeriod)
 
+        dup()
+
         val reportPeriod = reportsRepo.getReportPeriod()
         val period = mutableSetOf<String>()
         for (reportRow in reportPeriod)
@@ -60,7 +62,7 @@ class ReportController {
             for (i in 0..reportWithPeriod.lastIndex) {
                 stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
             }
-            saveReport.saveReport(stringFormattedReport, EMPLOYEE_PATH)
+            saveReport.saveReport(stringFormattedReport, baseValues.EMPLOYEE_PATH)
 
         } else {
             val duplicatesReport = duplicatesRepo!!.findAll()
@@ -74,11 +76,12 @@ class ReportController {
                     val client: Int = value.client
                     val contactDate: String = value.contactDate
                     val reportingPeriod: String = value.reportingPeriod
+                    val netto:Float = value.netto
                 }
                 result.add(resultRow)
                 stringFormattedReport.add(duplicatesReportToRow(value, token))
             }
-            saveReport.saveReport(stringFormattedReport, DUPLICATES_PATH)
+            saveReport.saveReport(stringFormattedReport, baseValues.DUPLICATES_PATH)
             model["duplicates"] = result
         }
         return "report"
@@ -110,5 +113,17 @@ class ReportController {
     private fun getFloatFormattedString(string: Float): String {
         val decFormat = DecimalFormat("#.##")
         return decFormat.format(string)
+    }
+
+    private fun dup() {
+        val dupTreatments = treatmentsRepo!!.findDub()
+
+        for (dupTreatment in dupTreatments) {
+            val netto = treatmentsRepo.calculateNettoForDuplicate(dupTreatment.client)
+            treatmentsRepo.delete(dupTreatment)
+            val duplicates =
+                with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod, netto) }
+            duplicatesRepo!!.save(duplicates)
+        }
     }
 }

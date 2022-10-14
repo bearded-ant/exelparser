@@ -26,4 +26,20 @@ interface TreatmentsRepo : CrudRepository<Treatments, Int> {
                 "ORDER BY st.client", nativeQuery = true
     )
     fun findDub(): List<Treatments>
+
+    @Query(
+        "SELECT " +
+                "SUM(f.NETTO) " +
+        "FROM " +
+                "ACCOUNTS a, " +
+                "CLIENTS c, " +
+                "FINANCES f " +
+        "WHERE " +
+                "f.ACCOUNT_ID = a.ID " +
+                "AND a.CLIENT_ID = c.ID " +
+                "AND c.CLIENT =:client " +
+        "GROUP BY c.CLIENT",
+        nativeQuery = true
+    )
+    fun calculateNettoForDuplicate(client: Int): Float
 }

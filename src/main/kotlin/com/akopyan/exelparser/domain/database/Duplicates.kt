@@ -10,5 +10,6 @@ data class Duplicates(
     val tokenId: Int = 0,
     val client: Int = 0,
     val contactDate: String = "",
-    val reportingPeriod: String = ""
+    val reportingPeriod: String = "",
+    val netto: Float = 0F
 )
