@@ -43,9 +43,9 @@ class ExelFileRepoImpl : ExelFileRepo {
             val row: XSSFRow = rowIterator.next() as XSSFRow
             val cellIterator: Iterator<Cell> = row.cellIterator()
             val string = mutableListOf<String>()
+            val sdf = DataFormatter()
 
             while (cellIterator.hasNext()) {
-                val sdf = DataFormatter()
                 val cell = sdf.formatCellValue(cellIterator.next(), evaluator)
                 string.add(cell)
             }

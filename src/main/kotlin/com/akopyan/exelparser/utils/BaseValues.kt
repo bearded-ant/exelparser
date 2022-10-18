@@ -22,4 +22,9 @@ class BaseValues {
     val FILE_EXISTS_ERROR = "no such file"
     val FILE_VALID = "valid name"
 
+    //report
+    val EMPLOYEE_PATH: String = "/home/ant/employeeReport.xlsx"
+//    val EMPLOYEE_PATH:String = "employeeReport.xlsx"
+    val DUPLICATES_PATH: String = "/home/ant/duplicateReport.xlsx"
+//    val DUPLICATES_PATH:String = "duplicateReport.xlsx"
 }

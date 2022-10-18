@@ -27,6 +27,9 @@ class EmployeeReportController {
     @Autowired
     private val treatmentsRepo: TreatmentsRepo? = null
 
+    @Autowired
+    private val duplicatesRepo: DuplicatesRepo? = null
+
     @GetMapping(path = ["/employee"])
     fun showBlanc(): String = "employee"
 
@@ -99,6 +102,7 @@ class EmployeeReportController {
                     }
                 }
             }
+            deleteDuplicates()
         } else return folders
         return folders
     }
@@ -117,5 +121,15 @@ class EmployeeReportController {
                 reportingPeriod = reportingPeriod
             )
         treatmentsRepo!!.save(treatments)
+    }
+
+    private fun deleteDuplicates() {
+        val dupTreatments = treatmentsRepo!!.findDub()
+        for (dupTreatment in dupTreatments) {
+            treatmentsRepo.delete(dupTreatment)
+            val duplicates =
+                with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod, 0F) }
+            duplicatesRepo!!.save(duplicates)
+        }
     }
 }

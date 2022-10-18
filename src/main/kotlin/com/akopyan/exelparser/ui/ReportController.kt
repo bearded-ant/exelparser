@@ -47,9 +47,6 @@ class ReportController {
     ): String {
 
         val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriod(selectPeriod)
-
-        dup()
-
         val reportPeriod = reportsRepo.getReportPeriod()
         val period = mutableSetOf<String>()
         for (reportRow in reportPeriod)
@@ -76,7 +73,7 @@ class ReportController {
                     val client: Int = value.client
                     val contactDate: String = value.contactDate
                     val reportingPeriod: String = value.reportingPeriod
-                    val netto:Float = value.netto
+                    val netto: Float = value.netto
                 }
                 result.add(resultRow)
                 stringFormattedReport.add(duplicatesReportToRow(value, token))
@@ -115,15 +112,15 @@ class ReportController {
         return decFormat.format(string)
     }
 
-    private fun dup() {
-        val dupTreatments = treatmentsRepo!!.findDub()
-
-        for (dupTreatment in dupTreatments) {
-            val netto = treatmentsRepo.calculateNettoForDuplicate(dupTreatment.client)
-            treatmentsRepo.delete(dupTreatment)
-            val duplicates =
-                with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod, netto) }
-            duplicatesRepo!!.save(duplicates)
-        }
-    }
+//    private fun deleteDuplicates() {
+//        val dupTreatments = treatmentsRepo!!.findDub()
+//
+//        for (dupTreatment in dupTreatments) {
+//            val netto = treatmentsRepo.calculateNettoForDuplicate(dupTreatment.client)
+//            treatmentsRepo.delete(dupTreatment)
+//            val duplicates =
+//                with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod, netto) }
+//            duplicatesRepo!!.save(duplicates)
+//        }
+//    }
 }
