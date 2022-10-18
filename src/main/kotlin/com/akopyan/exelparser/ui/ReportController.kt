@@ -46,23 +46,18 @@ class ReportController {
         model: MutableMap<String, Any>
     ): String {
 
-        val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriod(selectPeriod)
-        val reportPeriod = reportsRepo.getReportPeriod()
-        val period = mutableSetOf<String>()
-        for (reportRow in reportPeriod)
-            period.add(reportRow)
-        model["reportPeriod"] = period
-        if (reportType == "MAIN") {
-            model["reports"] = reportWithPeriod
+        showBlanc(model)
 
+        if (reportType == "MAIN") {
+            val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriod(selectPeriod)
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
             for (i in 0..reportWithPeriod.lastIndex) {
                 stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
             }
             saveReport.saveReport(stringFormattedReport, baseValues.EMPLOYEE_PATH)
-
+            model["reports"] = reportWithPeriod
         } else {
-            val duplicatesReport = duplicatesRepo!!.findAll()
+            val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriod(selectPeriod)
             val result: MutableList<Any> = mutableListOf()
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
 

@@ -102,7 +102,11 @@ class EmployeeReportController {
                     }
                 }
             }
-            deleteDuplicates()
+            //todo временно ерешение. передалать и передать нормально период
+            //todo будут проблемы если в файлах разные периоды
+            val reportingPeriod =
+                fileNameChecker.parseNameToTokenAndTimeStamp(folders[0].folderName).getValue("dateStamp")
+            deleteDuplicates(reportingPeriod)
         } else return folders
         return folders
     }
@@ -123,8 +127,8 @@ class EmployeeReportController {
         treatmentsRepo!!.save(treatments)
     }
 
-    private fun deleteDuplicates() {
-        val dupTreatments = treatmentsRepo!!.findDub()
+    private fun deleteDuplicates(reportingPeriod: String) {
+        val dupTreatments = treatmentsRepo!!.findDub(reportingPeriod)
         for (dupTreatment in dupTreatments) {
             treatmentsRepo.delete(dupTreatment)
             val duplicates =
