@@ -29,6 +29,9 @@ class CompanyReportController {
     @Autowired
     private val accountsRepo: AccountsRepo? = null
 
+    @Autowired
+    private val reportingPeriodsRepo: ReportingPeriodsRepo? = null
+
     @GetMapping(path = ["/company"])
     fun showBlanc(): String = "company"
 
@@ -54,6 +57,14 @@ class CompanyReportController {
 
                 val timeStamp =
                     fileNameChecker.parseNameToTokenAndTimeStamp(folderName.folderName).getValue("dateStamp")
+
+                val reportPeriodId = if (reportingPeriodsRepo!!.findByReportingPeriod(timeStamp).isEmpty()) {
+                    with(reportingPeriodsRepo) {
+                        save(ReportingPeriods(0, timeStamp))
+                        findByReportingPeriod(timeStamp)[0].id
+                    }
+                } else reportingPeriodsRepo.findByReportingPeriod(timeStamp)[0].id
+
                 val branch = fileNameChecker.parseNameToTokenAndTimeStamp(folderName.folderName).getValue("token")
 
                 val reportFile = parser.parseCompanyReport(folderName.folderName)
@@ -66,7 +77,7 @@ class CompanyReportController {
                         val reportRow = reportFile[i]
                         if (clientsRepo!!.findAllByClient(reportRow[1].toInt()).isEmpty()) {
 
-                            createAllTablesEntity(reportRow, reportStringHashCode, timeStamp, branch)
+                            createAllTablesEntity(reportRow, reportStringHashCode, reportPeriodId, branch)
 
                         } else {
                             val client = clientsRepo.findAllByClient(reportRow[1].toInt())
@@ -75,11 +86,11 @@ class CompanyReportController {
                                     reportRow,
                                     client[0].id,
                                     reportStringHashCode,
-                                    timeStamp,
+                                    reportPeriodId,
                                 )
                             } else {
                                 val account = accountsRepo.findAllByAccount(reportRow[3])
-                                createFinanceTableEntity(reportRow, account[0].id, reportStringHashCode, timeStamp)
+                                createFinanceTableEntity(reportRow, account[0].id, reportStringHashCode, reportPeriodId)
                             }
                         }
                     }
@@ -91,37 +102,36 @@ class CompanyReportController {
 
     private fun createFinanceTableEntity(
         reportRow: List<String>,
-        accountId: Int,
+        accountId: Long,
         reportStringHashCode: Int,
-        timeStamp: String,
-
-        ) {
-        val finance = financeBuilder(reportRow, accountId, reportStringHashCode, timeStamp)
+        reportPeriodId: Long,
+    ) {
+        val finance = financeBuilder(reportRow, accountId, reportStringHashCode, reportPeriodId)
         financeRepository!!.save(finance)
     }
 
     private fun createAccountAndFinancesTableEntity(
         reportRow: List<String>,
-        clientId: Int,
+        clientId: Long,
         reportStringHashCode: Int,
-        timeStamp: String,
+        reportPeriodId: Long,
     ) {
         val account = accountBuilder(reportRow, clientId)
         accountsRepo!!.save(account)
-        createFinanceTableEntity(reportRow, account.id, reportStringHashCode, timeStamp)
+        createFinanceTableEntity(reportRow, account.id, reportStringHashCode, reportPeriodId)
     }
 
     private fun createAllTablesEntity(
         reportRow: List<String>,
         reportStringHashCode: Int,
-        timeStamp: String,
+        reportPeriodId: Long,
         branch: String
     ) {
         val client = clientBuilder(reportRow, branch)
         clientsRepo!!.save(client)
         val account = accountBuilder(reportRow, client.id)
         accountsRepo!!.save(account)
-        createFinanceTableEntity(reportRow, account.id, reportStringHashCode, timeStamp)
+        createFinanceTableEntity(reportRow, account.id, reportStringHashCode, reportPeriodId)
     }
 
 
@@ -133,7 +143,7 @@ class CompanyReportController {
             city = branch
         )
 
-    private fun accountBuilder(reportFile: List<String>, clientId: Int): Accounts =
+    private fun accountBuilder(reportFile: List<String>, clientId: Long): Accounts =
         Accounts(
             id = 0,
             clientId = clientId,
@@ -141,7 +151,7 @@ class CompanyReportController {
             accountCurrency = reportFile[4]
         )
 
-    private fun financeBuilder(reportFile: List<String>, accountId: Int, hashCode: Int, reportDate: String): Finances =
+    private fun financeBuilder(reportFile: List<String>, accountId: Long, hashCode: Int, reportDateId: Long): Finances =
         Finances(
             id = 0,
             accountId = accountId,
@@ -153,7 +163,7 @@ class CompanyReportController {
             bonusPIPS = reportFile[10],
             IbPayment = reportFile[11],
             hash = hashCode,
-            reportingPeriod = reportDate
+            reportingPeriodId = reportDateId
         )
 
     private fun convertToFloat(s: String): Float {

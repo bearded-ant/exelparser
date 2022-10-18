@@ -8,7 +8,7 @@ interface ReportsRepo : CrudRepository<Reports, Int> {
 
     @Query(
         "select " +
-                "fin.reporting_period " +
+                "fin.reporting_period_id " +
                 "from " +
                 "FINANCES fin ",
         nativeQuery = true
@@ -30,9 +30,9 @@ interface ReportsRepo : CrudRepository<Reports, Int> {
                 "JOIN FINANCES f ON f.ACCOUNT_ID = a.ID " +
         "WHERE " +
                 "e.ID = t.TOKEN_ID " +
-                "AND t.REPORTING_PERIOD = :reportingPeriod " +
+                "AND t.REPORTING_PERIOD_ID = :reportingPeriodId " +
         "GROUP BY e.TOKEN , c.CLIENT, c.NAME, c.CITY",
         nativeQuery = true
     )
-    fun generateReportForReportingPeriod(reportingPeriod: String): List<Reports>
+    fun generateReportForReportingPeriodId(reportingPeriodId: Long): List<Reports>
 }

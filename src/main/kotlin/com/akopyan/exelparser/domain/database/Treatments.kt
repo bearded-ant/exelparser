@@ -9,9 +9,9 @@ import javax.persistence.Id
 data class Treatments(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int = 0,
-    val tokenId: Int = 0,
+    val id: Long = 0,
+    val tokenId: Long = 0,
     val client: Int = 0,
     val contactDate:String = "",
-    val reportingPeriod: String = ""
+    val reportingPeriodId: Long = 0
 )

@@ -41,7 +41,7 @@ class ReportController {
 
     @PostMapping(path = ["/report"])
     fun uploadingEmployeeReport(
-        @RequestParam selectPeriod: String,
+        @RequestParam selectPeriod: Long,
         @RequestParam reportType: String,
         model: MutableMap<String, Any>
     ): String {
@@ -49,7 +49,7 @@ class ReportController {
         showBlanc(model)
 
         if (reportType == "MAIN") {
-            val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriod(selectPeriod)
+            val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriod)
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
             for (i in 0..reportWithPeriod.lastIndex) {
                 stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
@@ -57,7 +57,7 @@ class ReportController {
             saveReport.saveReport(stringFormattedReport, baseValues.EMPLOYEE_PATH)
             model["reports"] = reportWithPeriod
         } else {
-            val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriod(selectPeriod)
+            val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriodId(selectPeriod)
             val result: MutableList<Any> = mutableListOf()
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
 
@@ -67,7 +67,7 @@ class ReportController {
                     val token: String = token
                     val client: Int = value.client
                     val contactDate: String = value.contactDate
-                    val reportingPeriod: String = value.reportingPeriod
+                    val reportingPeriodId: Long = value.reportingPeriodId
                     val netto: Float = value.netto
                 }
                 result.add(resultRow)
@@ -85,7 +85,7 @@ class ReportController {
             row.add(token)
             row.add(client.toString())
             row.add(contactDate)
-            row.add(reportingPeriod)
+            row.add(reportingPeriodId.toString())
         }
         return row
     }

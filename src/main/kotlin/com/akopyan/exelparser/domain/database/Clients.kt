@@ -9,7 +9,7 @@ import javax.persistence.Id
 data class Clients(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int = 0,
+    val id: Long = 0,
     val client: Int = 0,
     val name: String? = "",
     val city: String = ""

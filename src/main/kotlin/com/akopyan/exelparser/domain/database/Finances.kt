@@ -9,9 +9,9 @@ import javax.persistence.Id
 data class Finances(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int =0,
-    val accountId: Int = 0,
-    val reportingPeriod: String,
+    val id: Long =0,
+    val accountId: Long = 0,
+    val reportingPeriodId: Long = 0,
     val clearing: String = "",
     val floating: String = "",
     val bonusRISK: String = "",

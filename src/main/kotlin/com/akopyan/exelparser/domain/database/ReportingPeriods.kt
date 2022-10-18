@@ -9,6 +9,6 @@ import javax.persistence.Id
 data class ReportingPeriods(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int = 0,
+    val id: Long = 0,
     val reportingPeriod: String =""
 )

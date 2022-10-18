@@ -9,8 +9,8 @@ import javax.persistence.Id
 data class Accounts(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int = 0,
-    val clientId: Int = 0,
+    val id: Long = 0,
+    val clientId: Long = 0,
     val account: String = "",
     val accountCurrency: String = "USD"
 )

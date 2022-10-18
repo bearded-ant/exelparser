@@ -4,5 +4,5 @@ import org.springframework.data.repository.CrudRepository
 
 
 interface DuplicatesRepo : CrudRepository<Duplicates, Int> {
-    fun findAllByReportingPeriod(reportingPeriod:String): List<Duplicates>
+    fun findAllByReportingPeriodId(reportingPeriodId:Long): List<Duplicates>
 }
