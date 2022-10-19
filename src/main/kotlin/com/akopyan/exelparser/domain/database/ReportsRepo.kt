@@ -17,21 +17,35 @@ interface ReportsRepo : CrudRepository<Reports, Int> {
 
     @Query(
         "SELECT " +
-                "e.TOKEN, " +
                 "t.CLIENT, " +
-                "c.NAME, " +
-                "c.CITY, " +
-                "SUM(f.NETTO) AS NETTO " +
+                "stable.name, " +
+                "stable.netto, " +
+                "e.TOKEN, " +
+                "stable.city " +
         "FROM " +
-                "EMPLOYEES e, " +
-                "TREATMENTS t " +
-                "JOIN CLIENTS c ON c.CLIENT = t.CLIENT " +
-                "JOIN ACCOUNTS a ON a.CLIENT_ID = c.ID " +
-                "JOIN FINANCES f ON f.ACCOUNT_ID = a.ID " +
+                "EMPLOYEES e " +
+        "JOIN TREATMENTS t ON " +
+                "e.ID = t.EMPLOYEE_ID " +
+        "JOIN ( " +
+                "SELECT " +
+                   "cj.client, " +
+                    "cj.name, " +
+                    "cj.city, " +
+                    "SUM(fj.NETTO) AS netto " +
+                "FROM " +
+                    "CLIENTS cj, " +
+                    "ACCOUNTS aj , " +
+                    "FINANCES fj " +
+                "WHERE " +
+                    "cj.ID = aj.CLIENT_ID " +
+                    "AND aj.ID = fj.ACCOUNT_ID " +
+                    "AND fj.REPORTING_PERIOD_ID = :reportingPeriodId " +
+                "GROUP BY " +
+                    "cj.CLIENT) AS stable " +
+        "ON " +
+                "stable.client = t.CLIENT " +
         "WHERE " +
-                "e.ID = t.TOKEN_ID " +
-                "AND t.REPORTING_PERIOD_ID = :reportingPeriodId " +
-        "GROUP BY e.TOKEN , c.CLIENT, c.NAME, c.CITY",
+                "t.REPORTING_PERIOD_ID = :reportingPeriodId ",
         nativeQuery = true
     )
     fun generateReportForReportingPeriodId(reportingPeriodId: Long): List<Reports>

@@ -79,7 +79,7 @@ class EmployeeReportController {
 
                         val employee = employeesRepo.findAllByToken(token)[0]
                         //employee существует, ищем запись treatment. если такой нет - создаем
-                        if (treatmentsRepo!!.findAllByClientAndTokenIdAndReportingPeriodId(
+                        if (treatmentsRepo!!.findAllByClientAndEmployeeIdAndReportingPeriodId(
                                 client,
                                 employee.id,
                                 reportPeriodId
@@ -88,7 +88,7 @@ class EmployeeReportController {
                             treatmentBuilder(employee, reportRow, reportPeriodId)
                         } else {
                             //treatment существует, ищем запись сравниваем с текущей, большую записываем
-                            val treatments = treatmentsRepo.findAllByClientAndTokenIdAndReportingPeriodId(
+                            val treatments = treatmentsRepo.findAllByClientAndEmployeeIdAndReportingPeriodId(
                                 client,
                                 employee.id,
                                 reportPeriodId
@@ -101,7 +101,7 @@ class EmployeeReportController {
                                     treatmentsRepo.updateContactDate(
                                         contactDate = reportRow[1],
                                         client = client,
-                                        tokenId = treatment.tokenId
+                                        employeeId = treatment.employeeId
                                     )
                                 }
                             }
@@ -139,7 +139,7 @@ class EmployeeReportController {
         val treatments =
             Treatments(
                 id = 0,
-                tokenId = employees.id,
+                employeeId = employees.id,
                 client = client,
                 contactDate = reportRow[1],
                 reportingPeriodId = reportingPeriod
@@ -152,7 +152,7 @@ class EmployeeReportController {
         for (dupTreatment in dupTreatments) {
             treatmentsRepo.delete(dupTreatment)
             val duplicates =
-                with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriodId, 0F) }
+                with(dupTreatment) { Duplicates(id, employeeId, client, contactDate, reportingPeriodId, 0F) }
             duplicatesRepo!!.save(duplicates)
         }
     }

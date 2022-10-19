@@ -7,16 +7,16 @@ import org.springframework.transaction.annotation.Transactional
 
 
 interface TreatmentsRepo : CrudRepository<Treatments, Int> {
-    fun findAllByClientAndTokenIdAndReportingPeriodId(
+    fun findAllByClientAndEmployeeIdAndReportingPeriodId(
         client: Int,
-        tokenId: Long,
+        employeeId: Long,
         reportingPeriodId: Long
     ): List<Treatments>
 
     @Transactional
     @Modifying
-    @Query("update Treatments t set t.contactDate = :contactDate where t.client = :client and t.tokenId = :tokenId")
-    fun updateContactDate(contactDate: String, client: Int, tokenId: Long)
+    @Query("update Treatments t set t.contactDate = :contactDate where t.client = :client and t.employeeId = :employeeId")
+    fun updateContactDate(contactDate: String, client: Int, employeeId: Long)
 
     @Query(
         "SELECT t.* " +

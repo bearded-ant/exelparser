@@ -10,7 +10,7 @@ data class Treatments(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = 0,
-    val tokenId: Long = 0,
+    val employeeId: Long = 0,
     val client: Int = 0,
     val contactDate:String = "",
     val reportingPeriodId: Long = 0
