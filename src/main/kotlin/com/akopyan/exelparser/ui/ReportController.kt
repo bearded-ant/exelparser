@@ -28,6 +28,9 @@ class ReportController {
     @Autowired
     private val treatmentsRepo: TreatmentsRepo? = null
 
+    @Autowired
+    private val reportingPeriodsRepo: ReportingPeriodsRepo? = null
+
     @GetMapping(path = ["/report"])
     fun showBlanc(model: MutableMap<String, Any>): String {
 
@@ -67,8 +70,8 @@ class ReportController {
                     val token: String = token
                     val client: Int = value.client
                     val contactDate: String = value.contactDate
-                    val reportingPeriodId: Long = value.reportingPeriodId
-                    val netto: Float = value.netto
+                    val reportingPeriodId: String = getReportPeriod(value.reportingPeriodId)
+                    val netto: Float = getNetto(value.client)
                 }
                 result.add(resultRow)
                 stringFormattedReport.add(duplicatesReportToRow(value, token))
@@ -107,15 +110,7 @@ class ReportController {
         return decFormat.format(string)
     }
 
-//    private fun deleteDuplicates() {
-//        val dupTreatments = treatmentsRepo!!.findDub()
-//
-//        for (dupTreatment in dupTreatments) {
-//            val netto = treatmentsRepo.calculateNettoForDuplicate(dupTreatment.client)
-//            treatmentsRepo.delete(dupTreatment)
-//            val duplicates =
-//                with(dupTreatment) { Duplicates(id, tokenId, client, contactDate, reportingPeriod, netto) }
-//            duplicatesRepo!!.save(duplicates)
-//        }
-//    }
+    private fun getNetto(client: Int): Float = treatmentsRepo!!.calculateNettoForDuplicate(client)
+    private fun getReportPeriod(reportPeriodId: Long): String =
+        reportingPeriodsRepo!!.findById(reportPeriodId).get().reportingPeriod
 }
