@@ -56,15 +56,20 @@ class ExelFileRepoImpl : ExelFileRepo {
     }
 
 
-    override fun writeBook(changePrice: List<List<String>>, filePath: String) {
+    override fun writeBook(changePrice: List<List<String>>, numericCell: List<Int>, filePath: String) {
 
         val changeBook = XSSFWorkbook()
         val changeSheet = changeBook.createSheet()
         for (i in 0..changePrice.lastIndex) {
             val row = changeSheet.createRow(i)
             for (j in 0..changePrice[i].lastIndex) {
-                val cell = row.createCell(j, CellType.STRING)
-                cell.setCellValue(changePrice[i][j])
+                if (j in numericCell) {
+                    val cell = row.createCell(j, CellType.NUMERIC)
+                    cell.setCellValue(changePrice[i][j])
+                } else {
+                    val cell = row.createCell(j, CellType.STRING)
+                    cell.setCellValue(changePrice[i][j])
+                }
             }
         }
 

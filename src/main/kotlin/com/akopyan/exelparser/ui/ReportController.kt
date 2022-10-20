@@ -34,66 +34,66 @@ class ReportController {
     @GetMapping(path = ["/report"])
     fun showBlanc(model: MutableMap<String, Any>): String {
 
-        val reportPeriod = reportsRepo!!.getReportPeriod()
+        val reportPeriod = reportingPeriodsRepo!!.findAll()
         val period = mutableSetOf<String>()
         for (reportRow in reportPeriod)
-            period.add(reportRow)
+            period.add(reportRow.reportingPeriod)
         model["reportPeriod"] = period
         return "report"
     }
 
     @PostMapping(path = ["/report"])
     fun uploadingEmployeeReport(
-        @RequestParam selectPeriod: Long,
+        @RequestParam selectPeriod: String,
         @RequestParam reportType: String,
         model: MutableMap<String, Any>
     ): String {
 
         showBlanc(model)
-
+        val selectPeriodId = reportingPeriodsRepo!!.findByReportingPeriod(selectPeriod)[0].id
         if (reportType == "MAIN") {
-            val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriod)
+            val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriodId)
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
             for (i in 0..reportWithPeriod.lastIndex) {
-                stringFormattedReport.add(reportToRow(reportWithPeriod[i]))
+                stringFormattedReport.add(mainReportToRow(reportWithPeriod[i]))
             }
-            saveReport.saveReport(stringFormattedReport, baseValues.EMPLOYEE_PATH)
+            saveReport.saveReport(stringFormattedReport, baseValues.NUMERIC_CELL_MAIN, baseValues.EMPLOYEE_PATH)
             model["reports"] = reportWithPeriod
         } else {
-            val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriodId(selectPeriod)
+            val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriodId(selectPeriodId)
             val result: MutableList<Any> = mutableListOf()
             val stringFormattedReport: MutableList<List<String>> = mutableListOf()
 
-            for (value in duplicatesReport) {
-                val token: String = employeesRepo!!.findById(value.tokenId).get().token
-                val resultRow = object {
-                    val token: String = token
-                    val client: Int = value.client
-                    val contactDate: String = value.contactDate
-                    val reportingPeriodId: String = getReportPeriod(value.reportingPeriodId)
-                    val netto: Float = getNetto(value.client)
-                }
+            for (duplicate in duplicatesReport) {
+                val token: String = employeesRepo!!.findById(duplicate.tokenId).get().token
+                val resultRow = reportDuplicates(token, duplicate)
                 result.add(resultRow)
-                stringFormattedReport.add(duplicatesReportToRow(value, token))
+
+                stringFormattedReport.add(
+                    arrayListOf(
+                        resultRow.token,
+                        resultRow.client.toString(),
+                        resultRow.contactDate,
+                        selectPeriod,
+                        resultRow.netto.toString()
+                    )
+                )
             }
-            saveReport.saveReport(stringFormattedReport, baseValues.DUPLICATES_PATH)
+            saveReport.saveReport(stringFormattedReport, baseValues.NUMERIC_CELL_DUPLICATES, baseValues.DUPLICATES_PATH)
             model["duplicates"] = result
         }
         return "report"
     }
 
-    private fun duplicatesReportToRow(value: Duplicates, token: String): List<String> {
-        val row = mutableListOf<String>()
-        with(value) {
-            row.add(token)
-            row.add(client.toString())
-            row.add(contactDate)
-            row.add(reportingPeriodId.toString())
-        }
-        return row
+    private fun reportDuplicates(token: String, duplicate: Duplicates) = object {
+        val token: String = token
+        val client: Int = duplicate.client
+        val contactDate: String = duplicate.contactDate
+        val reportingPeriodId: String = getReportPeriod(duplicate.reportingPeriodId)
+        val netto: Float = getNetto(duplicate.client)
     }
 
-    private fun reportToRow(reportsWithPeriod: Reports): List<String> {
+    private fun mainReportToRow(reportsWithPeriod: Reports): List<String> {
         val row = mutableListOf<String>()
         with(reportsWithPeriod) {
             row.add(client.toString())
@@ -111,6 +111,7 @@ class ReportController {
     }
 
     private fun getNetto(client: Int): Float = treatmentsRepo!!.calculateNettoForDuplicate(client)
+
     private fun getReportPeriod(reportPeriodId: Long): String =
         reportingPeriodsRepo!!.findById(reportPeriodId).get().reportingPeriod
 }

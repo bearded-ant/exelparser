@@ -3,7 +3,7 @@ package com.akopyan.exelparser.utils
 class BaseValues {
     //all
     val BASE_PATH: String = "/home/ant/akopyan/"
-    //private const val BASE_PATH: String = ""
+//    val BASE_PATH: String = ""
 
     //company
     val SHEET_NAME_C: String = "Detailed franchisee"
@@ -23,8 +23,12 @@ class BaseValues {
     val FILE_VALID = "valid name"
 
     //report
+    val NUMERIC_CELL_MAIN: List<Int> = arrayListOf(0,2)
+    val NUMERIC_CELL_DUPLICATES: List<Int> = arrayListOf(1,4)
     val EMPLOYEE_PATH: String = "/home/ant/employeeReport.xlsx"
-//    val EMPLOYEE_PATH:String = "employeeReport.xlsx"
+
+    //    val EMPLOYEE_PATH:String = "employeeReport.xlsx"
     val DUPLICATES_PATH: String = "/home/ant/duplicateReport.xlsx"
 //    val DUPLICATES_PATH:String = "duplicateReport.xlsx"
+
 }

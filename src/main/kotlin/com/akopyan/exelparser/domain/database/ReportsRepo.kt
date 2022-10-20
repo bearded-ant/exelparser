@@ -7,15 +7,6 @@ import org.springframework.data.repository.CrudRepository
 interface ReportsRepo : CrudRepository<Reports, Int> {
 
     @Query(
-        "select " +
-                "fin.reporting_period_id " +
-                "from " +
-                "FINANCES fin ",
-        nativeQuery = true
-    )
-    fun getReportPeriod(): List<String>
-
-    @Query(
         "SELECT " +
                 "t.CLIENT, " +
                 "stable.name, " +
