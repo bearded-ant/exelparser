@@ -6,7 +6,6 @@ import java.io.File
 
 class ParserCompanyReport() {
 
-    private val fileNameChecker: FileNameUtils = FileNameUtils()
     private val baseValues:BaseValues = BaseValues()
 
     fun parseCompanyReport(pathToFile: String): List<List<String>> {
@@ -24,7 +23,7 @@ class ParserCompanyReport() {
                     for (j in baseValues.COLUM_INDEX_C)
                         row.add(exelPrice[i][j])
                     changePrice.add(row)
-                    println(changePrice[counter].toString())
+//                    println(changePrice[counter].toString())
                     counter++
                 }
             }
