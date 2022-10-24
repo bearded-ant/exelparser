@@ -85,29 +85,29 @@ class ExelFileRepoImpl : ExelFileRepo {
     }
 
     private fun recordMainReportFieldToCell(reportInterface: WritableInExel, row: Row) {
-        val mainReport: Reports = reportInterface as Reports
-        for (j in 0 until mainReport.fieldsCount) {
-            val cell: Cell = row.createCell(j)
-            when (j) {
-                0 -> cell.setCellValue(mainReport.client.toDouble())
-                1 -> cell.setCellValue(mainReport.name)
-                2 -> cell.setCellValue(mainReport.netto.toDouble())
-                3 -> cell.setCellValue(mainReport.token)
-                4 -> cell.setCellValue(mainReport.city)
+        val report: Reports = reportInterface as Reports
+        for (i in 0 until report.fieldsCount) {
+            val cell: Cell = row.createCell(i)
+            when (i) {
+                0 -> cell.setCellValue(report.client.toDouble())
+                1 -> cell.setCellValue(report.name)
+                2 -> cell.setCellValue(report.netto.toDouble())
+                3 -> cell.setCellValue(report.token)
+                4 -> cell.setCellValue(report.city)
             }
         }
     }
 
     private fun recordDuplicatesReportFieldToCell(reportsInterface: WritableInExel, row: Row) {
-        val duplicateReport: DuplicatesExelReport = reportsInterface as DuplicatesExelReport
-        for (j in 0 until duplicateReport.fieldsCount) {
-            val cell: Cell = row.createCell(j)
-            when (j) {
-                0 -> cell.setCellValue(duplicateReport.token)
-                1 -> cell.setCellValue(duplicateReport.client.toDouble())
-                2 -> cell.setCellValue(duplicateReport.contactDate)
-                3 -> cell.setCellValue(duplicateReport.reportingPeriod)
-                4 -> cell.setCellValue(duplicateReport.netto.toDouble())
+        val report: DuplicatesExelReport = reportsInterface as DuplicatesExelReport
+        for (i in 0 until report.fieldsCount) {
+            val cell: Cell = row.createCell(i)
+            when (i) {
+                0 -> cell.setCellValue(report.token)
+                1 -> cell.setCellValue(report.client.toDouble())
+                2 -> cell.setCellValue(report.contactDate)
+                3 -> cell.setCellValue(report.reportingPeriod)
+                4 -> cell.setCellValue(report.netto.toDouble())
             }
         }
     }
