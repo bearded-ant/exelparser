@@ -1,6 +1,9 @@
 package com.akopyan.exelparser.data
 
+import com.akopyan.exelparser.domain.DuplicatesExelReport
 import com.akopyan.exelparser.domain.ExelFileRepo
+import com.akopyan.exelparser.domain.WritableInExel
+import com.akopyan.exelparser.domain.database.Reports
 import com.akopyan.exelparser.utils.ContentChecker
 import org.apache.poi.EncryptedDocumentException
 import org.apache.poi.ss.usermodel.*
@@ -61,29 +64,52 @@ class ExelFileRepoImpl : ExelFileRepo {
         return exelData
     }
 
+    override fun recordAnyReport(reportsInterface: List<WritableInExel>, savePath: String) {
+        val book = XSSFWorkbook()
+        val sheet = book.createSheet()
+        for (i in 0..reportsInterface.lastIndex) {
+            val row = sheet.createRow(i)
+            recordFieldToCell(reportsInterface[i], row)
+        }
+        val out = FileOutputStream(File(savePath))
+        book.write(out)
+        out.close()
+        closeBook(book)
+    }
 
-    override fun writeBook(changePrice: List<List<String>>, numericCell: List<Int>, filePath: String) {
+    private fun recordFieldToCell(reportInterface: WritableInExel, row: Row) {
+        when (reportInterface) {
+            is Reports -> recordMainReportFieldToCell(reportInterface, row)
+            is DuplicatesExelReport -> recordDuplicatesReportFieldToCell(reportInterface, row)
+        }
+    }
 
-        val changeBook = XSSFWorkbook()
-        val changeSheet = changeBook.createSheet()
-        for (i in 0..changePrice.lastIndex) {
-            val row = changeSheet.createRow(i)
-            for (j in 0..changePrice[i].lastIndex) {
-                if (j in numericCell) {
-                    val cell = row.createCell(j, CellType.NUMERIC)
-                    cell.setCellValue(changePrice[i][j])
-                } else {
-                    val cell = row.createCell(j, CellType.STRING)
-                    cell.setCellValue(changePrice[i][j])
-                }
+    private fun recordMainReportFieldToCell(reportInterface: WritableInExel, row: Row) {
+        val mainReport: Reports = reportInterface as Reports
+        for (j in 0 until mainReport.fieldsCount) {
+            val cell: Cell = row.createCell(j)
+            when (j) {
+                0 -> cell.setCellValue(mainReport.client.toDouble())
+                1 -> cell.setCellValue(mainReport.name)
+                2 -> cell.setCellValue(mainReport.netto.toDouble())
+                3 -> cell.setCellValue(mainReport.token)
+                4 -> cell.setCellValue(mainReport.city)
             }
         }
+    }
 
-        val out = FileOutputStream(File(filePath))
-        changeBook.write(out)
-        out.close()
-
-        closeBook(changeBook)
+    private fun recordDuplicatesReportFieldToCell(reportsInterface: WritableInExel, row: Row) {
+        val duplicateReport: DuplicatesExelReport = reportsInterface as DuplicatesExelReport
+        for (j in 0 until duplicateReport.fieldsCount) {
+            val cell: Cell = row.createCell(j)
+            when (j) {
+                0 -> cell.setCellValue(duplicateReport.token)
+                1 -> cell.setCellValue(duplicateReport.client.toDouble())
+                2 -> cell.setCellValue(duplicateReport.contactDate)
+                3 -> cell.setCellValue(duplicateReport.reportingPeriod)
+                4 -> cell.setCellValue(duplicateReport.netto.toDouble())
+            }
+        }
     }
 
     override fun closeBook(book: XSSFWorkbook) {

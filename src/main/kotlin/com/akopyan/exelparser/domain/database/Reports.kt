@@ -1,5 +1,6 @@
 package com.akopyan.exelparser.domain.database
 
+import com.akopyan.exelparser.domain.WritableInExel
 import javax.persistence.Entity
 import javax.persistence.Id
 
@@ -10,5 +11,7 @@ data class Reports(
     val name: String = "",
     val netto: Float = 0F,
     val token: String = "",
-    val city: String = ""
-)
+    val city: String = "",
+    @Transient
+    override val fieldsCount: Int = 5
+) : WritableInExel

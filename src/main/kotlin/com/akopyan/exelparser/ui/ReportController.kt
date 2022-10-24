@@ -1,5 +1,6 @@
 package com.akopyan.exelparser.ui
 
+import com.akopyan.exelparser.domain.DuplicatesExelReport
 import com.akopyan.exelparser.domain.database.*
 import com.akopyan.exelparser.utils.BaseValues
 import com.akopyan.exelparser.utils.SaveReport
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.text.DecimalFormat
 
 
 @Controller
@@ -53,64 +53,32 @@ class ReportController {
         val selectPeriodId = reportingPeriodsRepo!!.findByReportingPeriod(selectPeriod)[0].id
         if (reportType == "MAIN") {
             val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriodId)
-            val stringFormattedReport: MutableList<List<String>> = mutableListOf()
-            for (i in 0..reportWithPeriod.lastIndex) {
-                stringFormattedReport.add(mainReportToRow(reportWithPeriod[i]))
-            }
-            saveReport.saveReport(stringFormattedReport, baseValues.NUMERIC_CELL_MAIN, baseValues.EMPLOYEE_PATH)
+            saveReport.saveReport(reportWithPeriod, baseValues.EMPLOYEE_PATH)
             model["reports"] = reportWithPeriod
         } else {
             val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriodId(selectPeriodId)
-            val result: MutableList<Any> = mutableListOf()
-            val stringFormattedReport: MutableList<List<String>> = mutableListOf()
+            val recordableResult: MutableList<DuplicatesExelReport> = mutableListOf()
 
             for (duplicate in duplicatesReport) {
                 val token: String = employeesRepo!!.findById(duplicate.tokenId).get().token
-                val resultRow = reportDuplicates(token, duplicate)
-                result.add(resultRow)
-
-                stringFormattedReport.add(
-                    arrayListOf(
-                        resultRow.token,
-                        resultRow.client.toString(),
-                        resultRow.contactDate,
-                        selectPeriod,
-                        resultRow.netto.toString()
-                    )
-                )
+                val resultRow = dbDuplicatesToExelFormat(token, duplicate)
+                recordableResult.add(resultRow)
             }
-            saveReport.saveReport(stringFormattedReport, baseValues.NUMERIC_CELL_DUPLICATES, baseValues.DUPLICATES_PATH)
-            model["duplicates"] = result
+            saveReport.saveReport(recordableResult, baseValues.DUPLICATES_PATH)
+            model["duplicates"] = recordableResult
         }
         return "report"
     }
 
-    private fun reportDuplicates(token: String, duplicate: Duplicates) = object {
-        val token: String = token
-        val client: Int = duplicate.client
-        val contactDate: String = duplicate.contactDate
-        val reportingPeriodId: String = getReportPeriod(duplicate.reportingPeriodId)
-        val netto: Float = getNetto(duplicate.client)
-    }
+    private fun dbDuplicatesToExelFormat(token: String, duplicate: Duplicates) = DuplicatesExelReport(
+        token = token,
+        client = duplicate.client,
+        contactDate = duplicate.contactDate,
+        reportingPeriod = getReportPeriod(duplicate.reportingPeriodId),
+        netto = getNetto(duplicate.client)
+    )
 
-    private fun mainReportToRow(reportsWithPeriod: Reports): List<String> {
-        val row = mutableListOf<String>()
-        with(reportsWithPeriod) {
-            row.add(client.toString())
-            row.add(name)
-            row.add(getFloatFormattedString(netto))
-            row.add(token)
-            row.add(city)
-        }
-        return row
-    }
-
-    private fun getFloatFormattedString(string: Float): String {
-        val decFormat = DecimalFormat("#.##")
-        return decFormat.format(string)
-    }
-
-    private fun getNetto(client: Int): Float = treatmentsRepo!!.calculateNettoForDuplicate(client)?:0f
+    private fun getNetto(client: Int): Float = treatmentsRepo!!.calculateNettoForDuplicate(client) ?: 0f
 
     private fun getReportPeriod(reportPeriodId: Long): String =
         reportingPeriodsRepo!!.findById(reportPeriodId).get().reportingPeriod
