@@ -2,10 +2,11 @@ package com.akopyan.exelparser.utils
 
 import com.akopyan.exelparser.data.ExelFileRepoImpl
 import java.io.File
+import java.time.Instant
 
 class ParserEmployeeReport() {
 
-    private val baseValues:BaseValues = BaseValues()
+    private val baseValues: BaseValues = BaseValues()
 
     fun parseEmployeeReport(pathToFile: String): List<List<String>> {
 
@@ -14,18 +15,23 @@ class ParserEmployeeReport() {
         val parsedReport = mutableListOf<MutableList<String>>()
         var counter = 0
 
+        val startJob = Instant.now().toEpochMilli()
+
         if (checkFileExists(pathUri)) {
             exelReport = readPriceToArray(pathUri)
             for (i in baseValues.ROW_START_INDEX_E..exelReport.lastIndex) {
-                if (exelReport[i].isNotEmpty()) {
+                if (exelReport[i].isNotEmpty() && exelReport[i].lastIndex == 2 && exelReport[i][0].isNotBlank()) {
                     val row = arrayListOf<String>()
                     for (j in baseValues.COLUM_INDEX_E)
                         row.add(exelReport[i][j])
                     parsedReport.add(row)
-                    println(parsedReport[counter].toString())
+//                    println(parsedReport[counter].toString())
                     counter++
                 }
             }
+
+            val endJob = Instant.now().toEpochMilli()
+            println("время ${endJob - startJob}, файл $pathToFile")
             return parsedReport
         } else return parsedReport
     }

@@ -52,7 +52,7 @@ class ExelFileRepoImpl : ExelFileRepo {
 
                 while (cellIterator.hasNext()) {
                     val cell = sdf.formatCellValue(cellIterator.next(), evaluator)
-                    string.add(cell)
+                    string.add(contentChecker.removeSpaces(cell))
                 }
                 exelData.add(string)
             }

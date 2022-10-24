@@ -26,4 +26,6 @@ class ContentChecker {
         sheet.removeMergedRegions(merged)
     }
 
+    fun removeSpaces(cellValue: String): String = StringUtils.normalizeSpace(cellValue).trim()
+
 }
