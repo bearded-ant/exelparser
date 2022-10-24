@@ -168,7 +168,7 @@ class CompanyReportController {
 
     private fun convertToFloat(s: String): Float {
 //        val decFormat = DecimalFormat("#.##")
-        val replaceSpace = s.replace(" ", "")
+        val replaceSpace = s.replace(" ", "")
         val replaceComma = replaceSpace.replace(",", ".")
         return replaceComma.toFloat()
     }

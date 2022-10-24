@@ -110,7 +110,7 @@ class ReportController {
         return decFormat.format(string)
     }
 
-    private fun getNetto(client: Int): Float = treatmentsRepo!!.calculateNettoForDuplicate(client)
+    private fun getNetto(client: Int): Float = treatmentsRepo!!.calculateNettoForDuplicate(client)?:0f
 
     private fun getReportPeriod(reportPeriodId: Long): String =
         reportingPeriodsRepo!!.findById(reportPeriodId).get().reportingPeriod

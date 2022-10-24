@@ -33,7 +33,7 @@ class ParserCompanyReport() {
 
     private fun readPriceToArray(pathUri: String): List<List<String>> {
         val newBook = ExelFileRepoImpl().openBook(pathUri)
-        return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_NAME_C)
+        return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_NAME_C_INDEX)
     }
 
     private fun checkFileExists(path: String): Boolean = File(path).isFile

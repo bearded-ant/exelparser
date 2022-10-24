@@ -50,5 +50,5 @@ interface TreatmentsRepo : CrudRepository<Treatments, Int> {
         "GROUP BY c.CLIENT",
         nativeQuery = true
     )
-    fun calculateNettoForDuplicate(client: Int): Float
+    fun calculateNettoForDuplicate(client: Int): Float?
 }

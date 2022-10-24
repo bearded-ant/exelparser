@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 
-    id("org.springframework.boot") version "2.7.4"
+    id("org.springframework.boot") version "2.7.5"
     id("io.spring.dependency-management") version "1.0.14.RELEASE"
 
     kotlin("jvm") version "1.6.21"
@@ -29,11 +29,11 @@ dependencies {
     //spring
     implementation("org.springframework.boot:spring-boot-starter-web")
 
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.7.4")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:2.7.5")
     implementation("com.h2database:h2:2.1.214")
 
     //mustache
-    implementation("org.springframework.boot:spring-boot-starter-mustache:2.7.4")
+    implementation("org.springframework.boot:spring-boot-starter-mustache:2.7.5")
 
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

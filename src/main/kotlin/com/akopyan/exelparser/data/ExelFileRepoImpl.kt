@@ -34,12 +34,12 @@ class ExelFileRepoImpl : ExelFileRepo {
         return book!!
     }
 
-    override fun getExelData(book: XSSFWorkbook, sheetName: String): MutableList<MutableList<String>> {
+    override fun getExelData(book: XSSFWorkbook, sheetName: Int): MutableList<MutableList<String>> {
 
         val evaluator: FormulaEvaluator = book.creationHelper.createFormulaEvaluator()
 
         val exelData = mutableListOf<MutableList<String>>()
-        val sheet: XSSFSheet = book.getSheet(sheetName)
+        val sheet: XSSFSheet = book.getSheetAt(sheetName)
         contentChecker.removeIfMerged(sheet)
         val rowIterator: Iterator<Row> = sheet.rowIterator()
         val sdf = DataFormatter()
