@@ -20,9 +20,9 @@ class ParserEmployeeReport() {
         if (checkFileExists(pathUri)) {
             exelReport = readPriceToArray(pathUri)
             for (i in baseValues.ROW_START_INDEX_E..exelReport.lastIndex) {
-                if (exelReport[i].isNotEmpty() && exelReport[i].lastIndex == 2 && exelReport[i][0].isNotBlank()) {
+                if (exelReport[i].isNotEmpty() && exelReport[i][0].isNotBlank()) {
                     val row = arrayListOf<String>()
-                    for (j in baseValues.COLUM_INDEX_E)
+                    for (j in 0..exelReport[i].lastIndex)
                         row.add(exelReport[i][j])
                     parsedReport.add(row)
 //                    println(parsedReport[counter].toString())
@@ -38,7 +38,7 @@ class ParserEmployeeReport() {
 
     private fun readPriceToArray(pathUri: String): List<List<String>> {
         val newBook = ExelFileRepoImpl().openBook(pathUri)
-        return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_NAME_E_INDEX)
+        return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_E_INDEX, baseValues.CELL_INDEXES_E)
     }
 
     private fun checkFileExists(path: String): Boolean = File(path).isFile

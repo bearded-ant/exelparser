@@ -4,7 +4,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 
 interface ExelFileRepo {
     fun openBook(path: String): XSSFWorkbook
-    fun getExelData(book: XSSFWorkbook, sheetName: Int):List<List<String>>
+    fun getExelData(book: XSSFWorkbook, sheetName: Int, cellIndexes: ArrayList<Int>):List<List<String>>
     fun recordAnyReport(reportsInterface: List<WritableInExel>, savePath: String)
     fun closeBook(book: XSSFWorkbook)
 }

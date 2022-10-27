@@ -37,7 +37,11 @@ class ExelFileRepoImpl : ExelFileRepo {
         return book!!
     }
 
-    override fun getExelData(book: XSSFWorkbook, sheetName: Int): MutableList<MutableList<String>> {
+    override fun getExelData(
+        book: XSSFWorkbook,
+        sheetName: Int,
+        cellIndexes: ArrayList<Int>
+    ): MutableList<MutableList<String>> {
 
         val evaluator: FormulaEvaluator = book.creationHelper.createFormulaEvaluator()
 
@@ -50,12 +54,13 @@ class ExelFileRepoImpl : ExelFileRepo {
         while (rowIterator.hasNext()) {
             val row: XSSFRow = rowIterator.next() as XSSFRow
             if (!contentChecker.checkIfRowIsEmpty(row)) {
-                val cellIterator: Iterator<Cell> = row.cellIterator()
                 val string = mutableListOf<String>()
 
-                while (cellIterator.hasNext()) {
-                    val cell = sdf.formatCellValue(cellIterator.next(), evaluator)
-                    string.add(contentChecker.removeSpaces(cell))
+                for (i in row.firstCellNum until row.lastCellNum) {
+                    if (i in cellIndexes) {
+                        val cell = sdf.formatCellValue(row.getCell(i), evaluator)
+                        string.add(contentChecker.removeSpaces(cell))
+                    }
                 }
                 exelData.add(string)
             }

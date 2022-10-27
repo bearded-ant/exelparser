@@ -6,7 +6,7 @@ import java.io.File
 
 class ParserCompanyReport() {
 
-    private val baseValues:BaseValues = BaseValues()
+    private val baseValues: BaseValues = BaseValues()
 
     fun parseCompanyReport(pathToFile: String): List<List<String>> {
 
@@ -18,9 +18,9 @@ class ParserCompanyReport() {
         if (checkFileExists(pathUri)) {
             exelPrice = readPriceToArray(pathUri)
             for (i in baseValues.ROW_START_INDEX_C until exelPrice.lastIndex) {
-                if ((exelPrice[i].isNotEmpty()) && (exelPrice[i][baseValues.COLUM_INDEX_C[0]].isNotEmpty())) {
+                if ((exelPrice[i].isNotEmpty()) && (exelPrice[i][baseValues.CELL_INDEXES_C[0]].isNotEmpty())) {
                     val row = arrayListOf<String>()
-                    for (j in baseValues.COLUM_INDEX_C)
+                    for (j in 0..exelPrice[i].lastIndex)
                         row.add(exelPrice[i][j])
                     changePrice.add(row)
 //                    println(changePrice[counter].toString())
@@ -33,7 +33,7 @@ class ParserCompanyReport() {
 
     private fun readPriceToArray(pathUri: String): List<List<String>> {
         val newBook = ExelFileRepoImpl().openBook(pathUri)
-        return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_NAME_C_INDEX)
+        return ExelFileRepoImpl().getExelData(newBook, baseValues.SHEET_C_INDEX, baseValues.CELL_INDEXES_C)
     }
 
     private fun checkFileExists(path: String): Boolean = File(path).isFile
