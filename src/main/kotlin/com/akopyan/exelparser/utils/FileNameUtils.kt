@@ -7,7 +7,7 @@ import java.io.File
 class FileNameUtils {
     private val baseValues: BaseValues = BaseValues()
 
-    private val regexEnding = Regex("""\d{4}_\d{1,2}\.""")
+    private val regexReportPeriod = Regex("""\d{4}_\d{1,2}\.""")
     private val regexBody = Regex("""[~!@#${'$'}%^&?:*(){}<>,;'"\[\]№]""")
     private val regexpExt = Regex("""(.xlsx)$""")
 
@@ -22,7 +22,7 @@ class FileNameUtils {
                 !regexpExt.containsMatchIn(fileName) ->
                     checkResults.add(Folder(fileName, false, baseValues.EXT_ERROR))
 
-                !regexEnding.containsMatchIn(fileName) ->
+                !regexReportPeriod.containsMatchIn(fileName) ->
                     checkResults.add(Folder(fileName, false, baseValues.ENDING_ERROR))
 
                 regexBody.containsMatchIn(fileName) ->
@@ -45,8 +45,9 @@ class FileNameUtils {
     fun parseNameToTokenAndTimeStamp(fileName: String): Map<String, String> {
         var dateStamp = ""
         var token = ""
-        if (regexEnding.containsMatchIn(fileName)) {
-            dateStamp = regexEnding.find(fileName)!!.value
+        if (regexReportPeriod.containsMatchIn(fileName)) {
+            val stampWithDot = regexReportPeriod.find(fileName)!!.value
+            dateStamp =stampWithDot.substring(0,stampWithDot.length-1)
             val nameLength = fileName.length
             val endingLength = dateStamp.length + 6
             val slashIndex =
