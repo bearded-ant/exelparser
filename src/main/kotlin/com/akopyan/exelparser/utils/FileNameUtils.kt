@@ -7,7 +7,7 @@ import java.io.File
 class FileNameUtils {
     private val baseValues: BaseValues = BaseValues()
 
-    private val regexEnding = Regex("""\d{4}_\d{1,2}""")
+    private val regexEnding = Regex("""\d{4}_\d{1,2}\.""")
     private val regexBody = Regex("""[~!@#${'$'}%^&?:*(){}<>,;'"\[\]№]""")
     private val regexpExt = Regex("""(.xlsx)$""")
 
