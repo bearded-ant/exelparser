@@ -12,6 +12,7 @@ data class Treatments(
     val id: Long = 0,
     val employeeId: Long = 0,
     val client: Int = 0,
-    val contactDate:String = "",
-    val reportingPeriodId: Long = 0
+    val contactDate: String = "",
+    val reportingPeriodId: Long = 0,
+    val duplicate: Boolean = false
 )

@@ -20,9 +20,6 @@ class ReportController {
     private val reportsRepo: ReportsRepo? = null
 
     @Autowired
-    private val duplicatesRepo: DuplicatesRepo? = null
-
-    @Autowired
     private val employeesRepo: EmployeesRepo? = null
 
     @Autowired
@@ -56,11 +53,11 @@ class ReportController {
             saveReport.saveReport(reportWithPeriod, baseValues.EMPLOYEE_PATH)
             model["reports"] = reportWithPeriod
         } else {
-            val duplicatesReport = duplicatesRepo!!.findAllByReportingPeriodId(selectPeriodId)
+            val duplicatesReport = treatmentsRepo!!.findByDuplicateAndReportingPeriodId(true, selectPeriodId)
             val recordableResult: MutableList<DuplicatesExelReport> = mutableListOf()
 
             for (duplicate in duplicatesReport) {
-                val token: String = employeesRepo!!.findById(duplicate.tokenId).get().token
+                val token: String = employeesRepo!!.findById(duplicate.employeeId).get().token
                 val resultRow = dbDuplicatesToExelFormat(token, duplicate)
                 recordableResult.add(resultRow)
             }
@@ -70,7 +67,7 @@ class ReportController {
         return "report"
     }
 
-    private fun dbDuplicatesToExelFormat(token: String, duplicate: Duplicates) = DuplicatesExelReport(
+    private fun dbDuplicatesToExelFormat(token: String, duplicate: Treatments) = DuplicatesExelReport(
         token = token,
         client = duplicate.client,
         contactDate = duplicate.contactDate,

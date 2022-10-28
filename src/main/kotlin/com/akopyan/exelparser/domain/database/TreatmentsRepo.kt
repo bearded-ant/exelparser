@@ -13,10 +13,18 @@ interface TreatmentsRepo : CrudRepository<Treatments, Int> {
         reportingPeriodId: Long
     ): List<Treatments>
 
+    fun findByDuplicateAndReportingPeriodId(duplicate: Boolean, reportingPeriodId: Long): List<Treatments>
+
     @Transactional
     @Modifying
     @Query("update Treatments t set t.contactDate = :contactDate where t.client = :client and t.employeeId = :employeeId")
     fun updateContactDate(contactDate: String, client: Int, employeeId: Long)
+
+    @Transactional
+    @Modifying
+    @Query("update Treatments t set t.duplicate = 'true' where t.id = :treatmentId")
+    fun setDuplicateFlag(treatmentId: Long)
+
 
     @Query(
         "SELECT t.* " +
@@ -34,20 +42,20 @@ interface TreatmentsRepo : CrudRepository<Treatments, Int> {
                 "ORDER BY t.client",
         nativeQuery = true
     )
-    fun findDub(reportingPeriodId: Long): List<Treatments>
+    fun findDuplicates(reportingPeriodId: Long): List<Treatments>
 
     @Query(
         "SELECT " +
                 "SUM(f.NETTO) " +
-        "FROM " +
+                "FROM " +
                 "ACCOUNTS a, " +
                 "CLIENTS c, " +
                 "FINANCES f " +
-        "WHERE " +
+                "WHERE " +
                 "f.ACCOUNT_ID = a.ID " +
                 "AND a.CLIENT_ID = c.ID " +
                 "AND c.CLIENT =:client " +
-        "GROUP BY c.CLIENT",
+                "GROUP BY c.CLIENT",
         nativeQuery = true
     )
     fun calculateNettoForDuplicate(client: Int): Float?

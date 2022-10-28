@@ -26,12 +26,9 @@ class EmployeeReportController {
     private val treatmentsRepo: TreatmentsRepo? = null
 
     @Autowired
-    private val duplicatesRepo: DuplicatesRepo? = null
-
-    @Autowired
     private val reportingPeriodsRepo: ReportingPeriodsRepo? = null
 
-     @GetMapping(path = ["/employee"])
+    @GetMapping(path = ["/employee"])
     fun showBlanc(): String = "employee"
 
     @PostMapping(path = ["/employee"])
@@ -68,13 +65,11 @@ class EmployeeReportController {
                     val client = reportRow[0].toInt()
                     //если нет записи employee создаем ее и обращение
                     if (employeesRepo!!.findAllByToken(token).isEmpty()) {
-
                         val employees = Employees(0, token)
                         employeesRepo.save(employees)
                         treatmentBuilder(employees, reportRow, reportPeriodId)
 
                     } else {
-
                         val employee = employeesRepo.findAllByToken(token)[0]
                         //employee существует, ищем запись treatment. если такой нет - создаем
                         if (treatmentsRepo!!.findAllByClientAndEmployeeIdAndReportingPeriodId(
@@ -95,7 +90,7 @@ class EmployeeReportController {
                             val newDay = SimpleDateFormat("dd/MM/yy HH:mm").parse(reportRow[1])
 
                             for (treatment in treatments) {
-                                if (savedDay < newDay) {
+                                if (savedDay < newDay && !treatment.duplicate) {
                                     treatmentsRepo.updateContactDate(
                                         contactDate = reportRow[1],
                                         client = client,
@@ -113,8 +108,7 @@ class EmployeeReportController {
                 fileNameChecker.parseNameToTokenAndTimeStamp(folders[0].folderName).getValue("dateStamp")
 
             val reportPeriodId = getReportingPeriodId(timeStamp)
-
-            deleteDuplicates(reportPeriodId)
+            saveDuplicates(reportPeriodId)
         } else return folders
         return folders
     }
@@ -145,13 +139,9 @@ class EmployeeReportController {
         treatmentsRepo!!.save(treatments)
     }
 
-    private fun deleteDuplicates(reportingPeriodId: Long) {
-        val dupTreatments = treatmentsRepo!!.findDub(reportingPeriodId)
-        for (dupTreatment in dupTreatments) {
-            treatmentsRepo.delete(dupTreatment)
-            val duplicates =
-                with(dupTreatment) { Duplicates(id, employeeId, client, contactDate, reportingPeriodId, 0F) }
-            duplicatesRepo!!.save(duplicates)
-        }
+    private fun saveDuplicates(reportingPeriodId: Long) {
+        val dupTreatments = treatmentsRepo!!.findDuplicates(reportingPeriodId)
+        for (dupTreatment in dupTreatments)
+            treatmentsRepo.setDuplicateFlag(dupTreatment.id)
     }
 }

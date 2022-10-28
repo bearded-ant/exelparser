@@ -36,7 +36,8 @@ interface ReportsRepo : CrudRepository<Reports, Int> {
         "ON " +
                 "stable.client = t.CLIENT " +
         "WHERE " +
-                "t.REPORTING_PERIOD_ID = :reportingPeriodId ",
+                "t.REPORTING_PERIOD_ID = :reportingPeriodId " +
+                "AND t.DUPLICATE = FALSE ",
         nativeQuery = true
     )
     fun generateReportForReportingPeriodId(reportingPeriodId: Long): List<Reports>

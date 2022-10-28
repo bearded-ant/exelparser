@@ -7,7 +7,6 @@ import com.akopyan.exelparser.domain.database.Reports
 import com.akopyan.exelparser.utils.ContentChecker
 import org.apache.poi.EncryptedDocumentException
 import org.apache.poi.ss.usermodel.*
-import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
@@ -50,20 +49,25 @@ class ExelFileRepoImpl : ExelFileRepo {
         val sheet: XSSFSheet = book.getSheetAt(sheetName)
         contentChecker.removeIfMerged(sheet)
         val sdf = DataFormatter()
+        val rowIterator = sheet.rowIterator()
+        var rowCounter = 0
 
-        for (j in rowStartIndex until sheet.lastRowNum) {
-            val row: XSSFRow = sheet.getRow(j)
-            if (!contentChecker.checkIfRowIsEmpty(row)) {
-                val string = mutableListOf<String>()
+        while (rowIterator.hasNext()) {
+            val row = rowIterator.next()
+            if (rowCounter >= rowStartIndex) {
+                if (!contentChecker.checkIfRowIsEmpty(row)) {
+                    val string = mutableListOf<String>()
 
-                for (i in row.firstCellNum until row.lastCellNum) {
-                    if (i in cellIndexes) {
-                        val cell = sdf.formatCellValue(row.getCell(i), evaluator)
-                        string.add(contentChecker.removeSpaces(cell))
+                    for (i in row.firstCellNum until row.lastCellNum) {
+                        if (i in cellIndexes) {
+                            val cell = sdf.formatCellValue(row.getCell(i), evaluator)
+                            string.add(contentChecker.removeSpaces(cell))
+                        }
                     }
+                    exelData.add(string)
                 }
-                exelData.add(string)
             }
+            rowCounter++
         }
         closeBook(book)
         return exelData

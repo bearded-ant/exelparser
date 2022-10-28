@@ -1,8 +1,0 @@
-package com.akopyan.exelparser.domain.database
-
-import org.springframework.data.repository.CrudRepository
-
-
-interface DuplicatesRepo : CrudRepository<Duplicates, Int> {
-    fun findAllByReportingPeriodId(reportingPeriodId:Long): List<Duplicates>
-}
