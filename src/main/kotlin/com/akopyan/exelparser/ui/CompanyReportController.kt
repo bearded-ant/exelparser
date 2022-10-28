@@ -155,19 +155,20 @@ class CompanyReportController {
         Finances(
             id = 0,
             accountId = accountId,
-            clearing = reportFile[5],
-            floating = reportFile[6],
-            bonusRISK = reportFile[7],
-            deposit = convertToFloat(reportFile[8]),
-            netto = convertToFloat(reportFile[9]),
-            bonusPIPS = reportFile[10],
-            IbPayment = reportFile[11],
             hash = hashCode,
-            reportingPeriodId = reportDateId
+            reportingPeriodId = reportDateId,
+            calculationScheme = reportFile[5],
+            clearing = convertToFloat(reportFile[6]),
+            floating = convertToFloat(reportFile[7]),
+            bonusRISK = convertToFloat(reportFile[8]),
+            deposit = convertToFloat(reportFile[9]),
+            withdrawal = convertToFloat(reportFile[10]),
+            netto = convertToFloat(reportFile[11]),
+            bonusPIPS = convertToFloat(reportFile[12]),
+            IbPayment = convertToFloat(reportFile[13])
         )
 
     private fun convertToFloat(s: String): Float {
-//        val decFormat = DecimalFormat("#.##")
         val replaceSpace = s.replace(" ", "")
         val replaceComma = replaceSpace.replace(",", ".")
         return replaceComma.toFloat()

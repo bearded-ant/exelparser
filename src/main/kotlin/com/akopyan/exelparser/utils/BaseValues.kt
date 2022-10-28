@@ -25,13 +25,10 @@ class BaseValues {
     val FILE_VALID = "верное имя файла"
 
     //report
-    val NUMERIC_CELL_MAIN: List<Int> = arrayListOf(0, 2)
-    val NUMERIC_CELL_DUPLICATES: List<Int> = arrayListOf(1, 4)
-
-            val EMPLOYEE_PATH: String = "/home/ant/employeeReport.xlsx"
+    val EMPLOYEE_PATH: String = "/home/ant/employeeReport.xlsx"
 //    val EMPLOYEE_PATH: String = "employeeReport.xlsx"
 
-            val DUPLICATES_PATH: String = "/home/ant/duplicateReport.xlsx"
+    val DUPLICATES_PATH: String = "/home/ant/duplicateReport.xlsx"
 //    val DUPLICATES_PATH: String = "duplicateReport.xlsx"
 
 }
