@@ -13,10 +13,10 @@
         <li>
             <a href="/report">Reports</a>
         </li>
-        <li >
+        <li>
             <a href="/company">Company Report</a>
         </li>
-        <li >
+        <li>
             <a href="/employee">Employee report</a>
         </li>
     </ul>
@@ -36,11 +36,25 @@
         </p>
         <p>
         <h4>uploaded files</h4>
-        {{#companyReportFolder}}
-            <ol>
-                <span>{{folderName}} {{description}} {{status}}</span>
-            </ol>
-        {{/companyReportFolder}}
+        <table id="table">
+            <thead>
+            <tr>
+                <th>имя файла</th>
+                <th>описание</th>
+                <th>статус</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {{#companyReportFolder}}
+                <tr>
+                    <td>{{folderName}}</td>
+                    <td> {{description}}</td>
+                    <td>{{status}}</td>
+                </tr>
+            {{/companyReportFolder}}
+            </tbody>
+        </table>
         </p>
     </div>
 </div>
