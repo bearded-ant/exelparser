@@ -3,7 +3,9 @@ package com.akopyan.exelparser.utils
 class BaseValues {
     //all
     val BASE_PATH: String = "/home/ant/akopyan/"
-//    val BASE_PATH: String = ""
+    //    val BASE_PATH: String = ""
+    
+    val BASE_EXTENSION = ".xlsx"
 
     //company
     val SHEET_NAME_C: String = "Detailed franchisee"
@@ -25,10 +27,6 @@ class BaseValues {
     val FILE_VALID = "верное имя файла"
 
     //report
-    val EMPLOYEE_PATH: String = "/home/ant/employeeReport.xlsx"
-//    val EMPLOYEE_PATH: String = "employeeReport.xlsx"
-
-    val DUPLICATES_PATH: String = "/home/ant/duplicateReport.xlsx"
-//    val DUPLICATES_PATH: String = "duplicateReport.xlsx"
-
+    val mainReportName: String = "main"
+    val duplicatesReportName: String = "duplicates"
 }

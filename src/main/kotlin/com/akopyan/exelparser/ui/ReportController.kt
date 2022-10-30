@@ -50,7 +50,7 @@ class ReportController {
         val selectPeriodId = reportingPeriodsRepo!!.findByReportingPeriod(selectPeriod)[0].id
         if (reportType == "MAIN") {
             val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriodId)
-            saveReport.saveReport(reportWithPeriod, baseValues.EMPLOYEE_PATH)
+            saveReport.saveReport(reportWithPeriod, pathBuilder(baseValues.mainReportName, selectPeriod))
             model["reports"] = reportWithPeriod
         } else {
             val duplicatesReport = treatmentsRepo!!.findByDuplicateAndReportingPeriodId(true, selectPeriodId)
@@ -61,7 +61,7 @@ class ReportController {
                 val resultRow = dbDuplicatesToExelFormat(token, duplicate)
                 recordableResult.add(resultRow)
             }
-            saveReport.saveReport(recordableResult, baseValues.DUPLICATES_PATH)
+            saveReport.saveReport(recordableResult, pathBuilder(baseValues.duplicatesReportName, selectPeriod))
             model["duplicates"] = recordableResult
         }
         return "report"
@@ -79,4 +79,7 @@ class ReportController {
 
     private fun getReportPeriod(reportPeriodId: Long): String =
         reportingPeriodsRepo!!.findById(reportPeriodId).get().reportingPeriod
+
+    private fun pathBuilder(reportName: String, period: String): String =
+        "${baseValues.BASE_PATH}/${reportName}_$period${baseValues.BASE_EXTENSION}"
 }
