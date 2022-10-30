@@ -8,6 +8,8 @@ class FileNameUtils {
     private val baseValues: BaseValues = BaseValues()
 
     private val regexReportPeriod = Regex("""\d{4}_\d{1,2}\.""")
+    val regexLong = Regex("""\d{4}_0\d\.""")
+
     private val regexBody = Regex("""[~!@#${'$'}%^&?:*(){}<>,;'"\[\]№]""")
     private val regexpExt = Regex("""(.xlsx)$""")
 
@@ -47,7 +49,9 @@ class FileNameUtils {
         var token = ""
         if (regexReportPeriod.containsMatchIn(fileName)) {
             val stampWithDot = regexReportPeriod.find(fileName)!!.value
-            dateStamp =stampWithDot.substring(0,stampWithDot.length-1)
+
+            dateStamp = delNullAndDot(stampWithDot)
+
             val nameLength = fileName.length
             val endingLength = dateStamp.length + 6
             val slashIndex =
@@ -60,5 +64,12 @@ class FileNameUtils {
         return result
     }
 
-    fun checkFileExists(path: String): Boolean = File("${baseValues.BASE_PATH}${path}").isFile
+    private fun delNullAndDot(badString: String): String {
+        if (regexLong.containsMatchIn(badString)) {
+            return badString.removeRange(5, 6).substring(0, badString.length - 2)
+        }
+        return badString.substring(0, badString.length - 1)
+    }
+
+    private fun checkFileExists(path: String): Boolean = File("${baseValues.BASE_PATH}${path}").isFile
 }
