@@ -3,12 +3,13 @@ package com.akopyan.exelparser.utils
 import com.akopyan.exelparser.domain.Folder
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
+import java.lang.StringBuilder
 
 class FileNameUtils {
     private val baseValues: BaseValues = BaseValues()
 
     private val regexReportPeriod = Regex("""\d{4}_\d{1,2}\.""")
-    val regexLong = Regex("""\d{4}_0\d\.""")
+    private val regexLong = Regex("""(\d{4}_\d)$""")
 
     private val regexBody = Regex("""[~!@#${'$'}%^&?:*(){}<>,;'"\[\]№]""")
     private val regexpExt = Regex("""(.xlsx)$""")
@@ -45,30 +46,28 @@ class FileNameUtils {
     }
 
     fun parseNameToTokenAndTimeStamp(fileName: String): Map<String, String> {
-        var dateStamp = ""
+        var dateStamp = StringBuilder()
         var token = ""
+        var endingLength = 0
         if (regexReportPeriod.containsMatchIn(fileName)) {
-            val stampWithDot = regexReportPeriod.find(fileName)!!.value
+            dateStamp.append(regexReportPeriod.find(fileName)!!.value)
+            dateStamp.deleteCharAt(dateStamp.lastIndex)
 
-            dateStamp = delNullAndDot(stampWithDot)
+            if (regexLong.containsMatchIn(dateStamp)) {
+                dateStamp.insert(5, '0')
+                endingLength = dateStamp.length + 5
+            } else endingLength = dateStamp.length + 6
 
             val nameLength = fileName.length
-            val endingLength = dateStamp.length + 6
+
             val slashIndex =
                 if (fileName.lastIndexOf('\\') == -1) fileName.lastIndexOf('/') else fileName.lastIndexOf('\\')
             token = fileName.substring(slashIndex + 1, (nameLength - endingLength))
         }
         val result = mutableMapOf<String, String>()
-        result["dateStamp"] = dateStamp
+        result["dateStamp"] = dateStamp.toString()
         result["token"] = token
         return result
-    }
-
-    private fun delNullAndDot(badString: String): String {
-        if (regexLong.containsMatchIn(badString)) {
-            return badString.removeRange(5, 6).substring(0, badString.length - 2)
-        }
-        return badString.substring(0, badString.length - 1)
     }
 
     private fun checkFileExists(path: String): Boolean = File("${baseValues.BASE_PATH}${path}").isFile
