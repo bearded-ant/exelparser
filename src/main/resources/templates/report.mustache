@@ -36,8 +36,8 @@
                 <option value={{.}}>{{.}}</option>
             {{/reportPeriod}}
         </select>
-        <input type="submit" name="reportType" value="MAIN" >
-        <input type="submit" name="reportType" value="DUPLICATES">
+        <input type="submit" name="reportType" value="main" >
+        <input type="submit" name="reportType" value="duplicates">
     </form>
 </div>
 <div>
@@ -45,23 +45,15 @@
     <table id="table">
         <thead>
         <tr>
-            <th>Client</th>
-            <th>Name</th>
-            <th>Netto</th>
-            <th>Token</th>
-            <th>City</th>
+            <th>Отчет сформирован</th>
         </tr>
         </thead>
         <tbody>
-        {{#reports}}
+        {{#main}}
             <tr>
-                <td>{{client}}</td>
-                <td>{{name}}</td>
-                <td><b>{{netto}}</b></td>
-                <td>{{token}} </td>
-                <td> {{city}} </td>
+                <td>обработано строк - {{.}}</td>
             </tr>
-        {{/reports}}
+        {{/main}}
         </tbody>
     </table>
     </p>

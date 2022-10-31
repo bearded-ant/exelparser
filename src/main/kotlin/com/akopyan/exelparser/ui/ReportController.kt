@@ -45,25 +45,30 @@ class ReportController {
         @RequestParam reportType: String,
         model: MutableMap<String, Any>
     ): String {
-
-        showBlanc(model)
         val selectPeriodId = reportingPeriodsRepo!!.findByReportingPeriod(selectPeriod)[0].id
-        if (reportType == "MAIN") {
-            val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriodId)
-            saveReport.saveReport(reportWithPeriod, pathBuilder(baseValues.mainReportName, selectPeriod))
-            model["reports"] = reportWithPeriod
-        } else {
-            val duplicatesReport = treatmentsRepo!!.findByDuplicateAndReportingPeriodId(true, selectPeriodId)
-            val recordableResult: MutableList<DuplicatesExelReport> = mutableListOf()
+        showBlanc(model)
 
-            for (duplicate in duplicatesReport) {
-                val token: String = employeesRepo!!.findById(duplicate.employeeId).get().token
-                val resultRow = dbDuplicatesToExelFormat(token, duplicate)
-                recordableResult.add(resultRow)
+        when(reportType) {
+            baseValues.mainReportName -> {
+                val reportWithPeriod = reportsRepo!!.generateReportForReportingPeriodId(selectPeriodId)
+                saveReport.saveReport(reportWithPeriod, pathBuilder(baseValues.mainReportName, selectPeriod))
+                model["main"] = reportWithPeriod.lastIndex
             }
-            saveReport.saveReport(recordableResult, pathBuilder(baseValues.duplicatesReportName, selectPeriod))
-            model["duplicates"] = recordableResult
+            baseValues.duplicatesReportName -> {
+                val duplicatesReport = treatmentsRepo!!.findByDuplicateAndReportingPeriodId(true, selectPeriodId)
+                val recordableResult: MutableList<DuplicatesExelReport> = mutableListOf()
+
+                for (duplicate in duplicatesReport) {
+                    val token: String = employeesRepo!!.findById(duplicate.employeeId).get().token
+                    val resultRow = dbDuplicatesToExelFormat(token, duplicate)
+                    recordableResult.add(resultRow)
+                }
+                saveReport.saveReport(recordableResult, pathBuilder(baseValues.duplicatesReportName, selectPeriod))
+                model["duplicates"] = recordableResult
+            }
+            else -> showBlanc(model)
         }
+
         return "report"
     }
 
